@@ -35,12 +35,6 @@ int* aleatorio(int n)
 }
 //[FIM] Gerador de arrays
 
-int pivo (int inicio, int fim) 
-{ 
-    //Media sem estourar limite
-    return (((fim - inicio)/2) + inicio);
-}
-
 template <typename T>
 bool gerar_pior_caso (T *v, int n) 
 { 
