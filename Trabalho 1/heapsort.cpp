@@ -1,13 +1,8 @@
 #include <iostream>
 using namespace std;
+#include "heapsort.h"
 
-class Heap {
-  int n;
-  int *array;
-  int currentSize;
-
-  public:
-  Heap(int *a, int size) {
+  Heap::Heap(int *a, int size) {
     array = new int[size];
     for (int i = 0; i < size; i++) {
       this->array[i] = a[i];
@@ -16,7 +11,7 @@ class Heap {
     this->currentSize = size;
   }
 
-  void descer(int i) {
+  void Heap::descer(int i) {
     int m = i;
     int l = 2 * i + 1;
     int r = 2 * i + 2;
@@ -28,39 +23,45 @@ class Heap {
       m = r;
 
     if (m != i) {
-      cout << "Olhando ate a posicao: " << this->currentSize << "\n";
-      cout << "TROCA [" << array[i] << "," << array[m] << "]"
-           << "\n";
+      //cout << "Heap ja existe ate: " << this->currentSize << "\n";
+      //cout << "TROCA [" << array[i] << "," << array[m] << "]"
+      //     << "\n";
       swap(array[i], array[m]);
       descer(m);
     }
   }
 
-  void heapSort() {
-
+  void Heap::heapSort() {
+    constroiHeap();
     while (this->currentSize > 0) {
-      cout << "--------------------\n";
-      minhaHeap();
-      cout << "TROCA [" << array[0] << "," << array[this->currentSize - 1]
-           << "]"
-           << "\n";
+      //cout << "--------------------\n";
+      //minhaHeap();
+      //cout << "TROCA [" << array[0] << "," << array[this->currentSize - 1]
+       //    << "]"
+      //     << "\n";
       swap(array[0], array[this->currentSize - 1]);
-      cout << "HEAP APOS A TROCA\n";
-      minhaHeap();
+      //cout << "HEAP APOS A TROCA\n";
+      //minhaHeap();
       this->currentSize--;
-      minhaHeap();
+      //minhaHeap();
       descer(0);
-      cout << "--------------------\n";
+      //cout << "--------------------\n";
     }
   }
 
-  void minhaHeap() {
+  void Heap::constroiHeap() {
+    for (int i = n / 2 - 1; i >= 0; i--) {
+      descer(i);
+    }
+  }
+
+  void Heap::minhaHeap() {
     for (int i = 0; i < n; ++i)
       cout << array[i] << " ";
     cout << "\n";
   }
-};
 
+/*
 int main() {
   int a[10] = {6, 7, 1, 4, 3, 2, 7, 8, 9, 10};
   int n = sizeof(a) / sizeof(a[0]);
@@ -68,9 +69,6 @@ int main() {
   Heap *h = new Heap(a, n);
 
   h->minhaHeap();
-  for (int i = n / 2 - 1; i >= 0; i--) {
-    h->descer(i);
-  }
 
   cout << "Array -> Heap\n";
   h->minhaHeap();
@@ -80,3 +78,4 @@ int main() {
 
   return 0;
 }
+*/

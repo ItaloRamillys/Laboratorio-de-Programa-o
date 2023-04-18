@@ -1,37 +1,65 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <chrono>
+#include <random>
+#include <stdlib.h>     /* srand, rand */
+#include "heapsort.h"
+#include "quicksort.h"
+
 using namespace std;
+using namespace chrono;
+
+void meuArray(int **arr, int n, int m) {
+    
+    for (int i = 0; i < n; i++){
+        cout << "Vetor [" << i << "]";
+        for (int j = 0; j < m; j++){
+            cout << arr[i][j] << " ";
+        }
+        cout << "\n";
+    }
+    cout << "\n";
+}
 
 //[INICIO] Gerador de arrays
-int* crescente(int n)
+void crescente(int **arr, int i, int m)
 {
-    int *array = new int[n];
-    for(int i = 0; i < n; i++)
+    srand(time(NULL)+rand()%1000);
+    int primeiro = rand()%10;
+    //cout << "\nPrimeiro sorteado: " << primeiro << "\n";
+    for(int j = 0; j < m; j++)
     {
-        array[i] = i;
+        //cout << (primeiro+j) << " ";
+        arr[i][j] = (primeiro+j);
     }
-    return array;
+    //cout << "\n";
 }
 
-int* decrescente(int n)
+void decrescente(int **arr, int i, int m)
 {
-    int *array = new int[n];
-    for(int i = n-1; i >= 0; i--)
+    srand(time(NULL)+rand()%1000);
+    int primeiro = rand()%10;
+    //cout << "\nPrimeiro sorteado: " << primeiro << "\n";
+    for(int j = 0; j < m; j++)
     {
-        array[i] = n-i;
+        //cout << (primeiro-j) << " ";
+        arr[i][j] = (primeiro-j);
     }
-    return array;
+   // cout << "\n";
 }
 
-int* aleatorio(int n)
+void aleatorio(int **arr, int i, int m)
 {
-    int *array = new int[n];
-    for(int i = 0; i < n; i++)
+    //cout << "\nALEATORIO\n";
+    srand(time(NULL)+rand()%1000);
+    int primeiro = rand()%10;
+    //cout << "\nPrimeiro sorteado: " << primeiro << "\n";
+    for(int j = 0; j < m; j++)
     {
-        array[i] = rand()%100;
+        arr[i][j] = rand()%100;
     }
-    return array;
+    //cout << "\n";
 }
 //[FIM] Gerador de arrays
 
@@ -41,8 +69,98 @@ bool gerar_pior_caso (T *v, int n)
     return true;
 }
 
-int main() {
-  
+void preencheVetores(int **meuV, char tipo, int nInstancias, int nElementos)
+{
+    if(tipo == 'A'){
+        for(int i = 0; i < nInstancias; i++)
+        {
+            //cout << "\nPreenchendo de forma aleatória";
+            aleatorio(meuV, i, nElementos);
+        }
+    }else if(tipo == 'C'){
+        for(int i = 0; i < nInstancias; i++)
+        {   
+            //cout << "\nPreenchendo de forma crescente";
+            crescente(meuV, i, nElementos);
+        }
+    }else if(tipo == 'D'){
+        for(int i = 0; i < nInstancias; i++)
+        {   
+            //cout << "\nPreenchendo de forma decrescente";
+            decrescente(meuV, i, nElementos);
+        }
+    }
+}
+
+int** copiaMatriz(int **a, int n, int m){
+    int** arr = new int*[m];
+
+    for (int i = 0; i < m; i++) {
+        arr[i] = new int[n];
+    }
+
+    for(int i = 0; i < m; i++){
+        for(int j = 0; j < n; j++){
+            arr[i][j] = a[i][j];
+        }
+    }
+    return arr;
+}
+
+void rodaAlgortimos(int **a, int n, int m){
+    int** arr = copiaMatriz(a, n, m);
+    
+    float timeHS = 0;
+    for(int i = 0; i < m; i++){
+        Heap *h = new Heap(arr[i], n);
+        
+        auto inicio = steady_clock::now();
+        h->heapSort();
+        auto fim = steady_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(fim - inicio);
+        
+        printf("Tempo Heapsort: %f\n", (elapsed/1e9));
+        timeHS = timeHS + elapsed.count();
+        
+        //cout << "\nDepois de ordenado pelo Heap\n";
+        //h->minhaHeap();
+        //cout << "\n";
+    }
+    arr = copiaMatriz(a, n, m);
+    float timeQS = 0;
+    for(int i = 0; i < m; i++){
+        Quick *q = new Quick(arr[i], n);
+        
+        auto inicio = steady_clock::now();
+        q->quickSort();
+        auto fim = steady_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(fim - inicio);
+        printf("Tempo Quicksort: %f\n", (elapsed/1e9));
+        timeQS = timeQS + elapsed.count();
+        //cout << "\nDepois de ordenado pelo Quick\n";
+        //q->meuArray();
+        //cout << "\n";
+    }
+
+    printf("Tempo Heapsort: %f\n", (timeHS/1e9));
+    printf("Tempo Quicksort:  %f\n", (timeQS/1e9));
+}
+
+int main(int argc, char *argv[]) {
+    
+    int nInstancias = atoi(argv[3]);
+    int nElementos = atoi(argv[2]);
+    int** a = new int*[nInstancias];
+
+    for (int i = 0; i < nInstancias; i++) {
+        a[i] = new int[nElementos];
+    }
+
+    preencheVetores(a, *argv[1], nInstancias, nElementos);
+
+    rodaAlgortimos(a, nElementos, nInstancias);
+
+    /*
     int* ptr1;
     int* ptr2;
     int* ptr3;
@@ -58,7 +176,7 @@ int main() {
     cout <<"\nCrescente";
     for(int i=0 ; i<n; i++)
     {
-		cout<<"\n"<<ptr1[i]; //*(ptr+i)
+		cout<<"\n"<<ptr1[i];
     }
 
     cout <<"\nDecrescente";
@@ -72,6 +190,7 @@ int main() {
     {
 		cout<<"\n"<<ptr3[i];
     }
-		
+
 	return 0;
+    */
 }
