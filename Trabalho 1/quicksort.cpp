@@ -8,16 +8,23 @@
 using namespace std;
 using namespace chrono;
  
-
-    Quick::Quick(int *a, int size) {
-        arr = new int[size];
-        for (int i = 0; i < size; i++) {
+    Quick::Quick(int *a, int n, int tipoPivo) {
+        arr = new int[n];
+        for (int i = 0; i < n; i++) {
             this->arr[i] = a[i];
         }
-        this->n = size;
+        this->n = n;
+        this->tipoPivo = tipoPivo;
     }
     
     int Quick::pivoFixo (int inicio, int fim) 
+    { 
+        //Media sem estourar limite
+        //cout <<"\nFim: " << fim << " - Inicio: " << inicio << " - Meio: " << (floor((fim - inicio)/2) + inicio);
+        return (rand() % (fim - inicio + 1) + inicio);
+    }
+    
+    int Quick::pivoAleatorio (int inicio, int fim) 
     { 
         //Media sem estourar limite
         //cout <<"\nFim: " << fim << " - Inicio: " << inicio << " - Meio: " << (floor((fim - inicio)/2) + inicio);
@@ -32,7 +39,12 @@ using namespace chrono;
         //    printf("%d ", arr[i]);
         //printf("\n");
 
-        int indPivo = pivoFixo(inicio, fim);
+        int indPivo;
+        
+        if(this->tipoPivo == 0)
+            indPivo = pivoFixo(inicio, fim);
+        else
+            indPivo = pivoAleatorio(inicio, fim);
         int pivo = arr[indPivo];
 
         //cout << "\n -- PIVO: " << pivo << "\n";

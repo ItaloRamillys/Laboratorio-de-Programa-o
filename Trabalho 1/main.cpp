@@ -127,25 +127,42 @@ void rodaAlgortimos(int **a, int n, int m){
         //cout << "\n";
     }
     arr = copiaMatriz(a, n, m);
-    float timeQS = 0;
+    float timeQSF = 0;
     for(int i = 0; i < m; i++){
-        Quick *q = new Quick(arr[i], n);
+        Quick *q = new Quick(arr[i], n, 0);//0 = pivo fixo
         
         auto inicio = steady_clock::now();
         q->quickSort();
         auto fim = steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(fim - inicio);
-        printf("Tempo Quicksort: %f\n", (elapsed/1e9));
-        timeQS = timeQS + elapsed.count();
+        printf("Tempo Quicksort Pivo Fixo: %f\n", (elapsed/1e9));
+        timeQSF = timeQSF + elapsed.count();
+        //cout << "\nDepois de ordenado pelo Quick\n";
+        //q->meuArray();
+        //cout << "\n";
+    }
+
+    arr = copiaMatriz(a, n, m);
+    float timeQSA = 0;
+    for(int i = 0; i < m; i++){
+        Quick *q = new Quick(arr[i], n, 1);//1 = pivo aleatorio
+        
+        auto inicio = steady_clock::now();
+        q->quickSort();
+        auto fim = steady_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(fim - inicio);
+        printf("Tempo Quicksort Pivo Aleatorio: %f\n", (elapsed/1e9));
+        timeQSA = timeQSA + elapsed.count();
         //cout << "\nDepois de ordenado pelo Quick\n";
         //q->meuArray();
         //cout << "\n";
     }
 
     printf("Tempo Heapsort: %f\n", (timeHS/1e9));
-    printf("Tempo Quicksort:  %f\n", (timeQS/1e9));
+    printf("Tempo Quicksort Pivo Fixo:  %f\n", (timeQSF/1e9));
+    printf("Tempo Quicksort Pivo Aleatorio:  %f\n", (timeQSA/1e9));
 }
-
+/*
 int main(int argc, char *argv[]) {
     
     int nInstancias = atoi(argv[3]);
@@ -192,5 +209,5 @@ int main(int argc, char *argv[]) {
     }
 
 	return 0;
-    */
 }
+*/
