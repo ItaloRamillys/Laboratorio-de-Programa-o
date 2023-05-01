@@ -1,0 +1,5 @@
+As instâncias a gerar (crescentes e descrescentes) devem iniciar com  um numero aleatorio?
+
+Tipo T do vetor quer dizer o tipo dos dados do vetor?
+
+Definir o valor do introsort com insertion

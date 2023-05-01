@@ -53,7 +53,6 @@ void aleatorio(int **arr, int i, int m)
 {
     //cout << "\nALEATORIO\n";
     srand(time(NULL)+rand()%1000);
-    int primeiro = rand()%10;
     //cout << "\nPrimeiro sorteado: " << primeiro << "\n";
     for(int j = 0; j < m; j++)
     {
@@ -66,6 +65,8 @@ void aleatorio(int **arr, int i, int m)
 template <typename T>
 bool gerar_pior_caso (T *v, int n) 
 { 
+    //Passar um vetor ordenado e para cada posicao x[0-n-1] coloca-lo na posicao da funcao pivo pro inervalo de cada particao,
+    //guardaria a posicao num vetor auxiliar
     return true;
 }
 
@@ -119,7 +120,7 @@ void rodaAlgortimos(int **a, int n, int m){
         auto fim = steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(fim - inicio);
         
-        printf("Tempo Heapsort: %f\n", (elapsed/1e9));
+        //printf("Tempo Heapsort: %f\n", (elapsed/1e9));
         timeHS = timeHS + elapsed.count();
         
         //cout << "\nDepois de ordenado pelo Heap\n";
@@ -135,7 +136,7 @@ void rodaAlgortimos(int **a, int n, int m){
         q->quickSort();
         auto fim = steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(fim - inicio);
-        printf("Tempo Quicksort Pivo Fixo: %f\n", (elapsed/1e9));
+        //printf("Tempo Quicksort Pivo Fixo: %f\n", (elapsed/1e9));
         timeQSF = timeQSF + elapsed.count();
         //cout << "\nDepois de ordenado pelo Quick\n";
         //q->meuArray();
@@ -151,7 +152,7 @@ void rodaAlgortimos(int **a, int n, int m){
         q->quickSort();
         auto fim = steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(fim - inicio);
-        printf("Tempo Quicksort Pivo Aleatorio: %f\n", (elapsed/1e9));
+        //printf("Tempo Quicksort Pivo Aleatorio: %f\n", (elapsed/1e9));
         timeQSA = timeQSA + elapsed.count();
         //cout << "\nDepois de ordenado pelo Quick\n";
         //q->meuArray();
@@ -162,11 +163,11 @@ void rodaAlgortimos(int **a, int n, int m){
     printf("Tempo Quicksort Pivo Fixo:  %f\n", (timeQSF/1e9));
     printf("Tempo Quicksort Pivo Aleatorio:  %f\n", (timeQSA/1e9));
 }
-/*
+
 int main(int argc, char *argv[]) {
     
-    int nInstancias = atoi(argv[3]);
-    int nElementos = atoi(argv[2]);
+    int nInstancias = atoi(argv[argc-1]);
+    int nElementos = atoi(argv[argc-2]);
     int** a = new int*[nInstancias];
 
     for (int i = 0; i < nInstancias; i++) {
@@ -176,8 +177,7 @@ int main(int argc, char *argv[]) {
     preencheVetores(a, *argv[1], nInstancias, nElementos);
 
     rodaAlgortimos(a, nElementos, nInstancias);
-
-    /*
+/*
     int* ptr1;
     int* ptr2;
     int* ptr3;
@@ -207,7 +207,7 @@ int main(int argc, char *argv[]) {
     {
 		cout<<"\n"<<ptr3[i];
     }
-
-	return 0;
-}
 */
+	return 0;
+   
+}

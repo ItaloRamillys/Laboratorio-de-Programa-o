@@ -1,0 +1,7 @@
+todos os arquivos devem ser compilados
+
+g++ -Wall -Wextra -std=c++17 -pedantic -o programa *.cpp
+
+em seguida pode executar conforme descrição do trabalho
+
+./programa [Tipo de Instancia] [Tamanho do Vetor] [Numero de Instancias]

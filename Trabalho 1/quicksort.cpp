@@ -17,14 +17,14 @@ using namespace chrono;
         this->tipoPivo = tipoPivo;
     }
     
-    int Quick::pivoFixo (int inicio, int fim) 
+    int Quick::pivoAleatorio (int inicio, int fim) 
     { 
         //Media sem estourar limite
         //cout <<"\nFim: " << fim << " - Inicio: " << inicio << " - Meio: " << (floor((fim - inicio)/2) + inicio);
         return (rand() % (fim - inicio + 1) + inicio);
     }
     
-    int Quick::pivoAleatorio (int inicio, int fim) 
+    int Quick::pivoFixo (int inicio, int fim) 
     { 
         //Media sem estourar limite
         //cout <<"\nFim: " << fim << " - Inicio: " << inicio << " - Meio: " << (floor((fim - inicio)/2) + inicio);

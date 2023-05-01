@@ -206,7 +206,7 @@ int* aleatorio(int n)
     }
     return array;
 }
-
+/*
 int main() {
     int n = 80;
     int *arr = aleatorio(n);
@@ -221,4 +221,4 @@ int main() {
     intro->printarr();
 
     return 0;
-}
+}*/

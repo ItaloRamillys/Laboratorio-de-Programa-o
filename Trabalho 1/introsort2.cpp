@@ -1,8 +1,16 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <chrono>
+#include <stdio.h>
+#include <random>
+#include <stdlib.h>     /* srand, rand */
+#include "heapsort.h"
+#include "quicksort.h"
+
 using namespace std;
- 
+using namespace chrono;
+
 void insertionsort(int a[], int inicio, int fim)
 {
     for (int i = inicio + 1; i <= fim; i++)
@@ -72,7 +80,9 @@ void heapsort(int *inicio, int *fim)
 void introsort(int a[], int *inicio, int *fim, int limite)
 {
     // executa a ordenação por inserção se o tamanho da partição for 16 ou menor
-    if ((fim - inicio) < 16) {
+
+    //Para 50000000(50 milhões) o melhor limite foi 128 (Testei com 8,16,32,64,50,100,128,256) [27s ~ 31s]
+    if ((fim - inicio) < 8) {
         insertionsort(a, inicio - a, fim - a);
     }
     // executa heapsort se a profundidade máxima for 0
@@ -86,22 +96,51 @@ void introsort(int a[], int *inicio, int *fim, int limite)
         introsort(a, a + pivo + 1, fim, limite - 1);
     }
 }
- 
+
+/*
+int* aleatorio(int n)
+{
+    int *array = new int[n];
+    for(int i = 0; i < n; i++)
+    {
+        array[i] = rand()%100;
+    }
+    return array;
+}
+
+int* crescente(int n)
+{
+    int *array = new int[n];
+    for(int i = 0; i < n; i++)
+    {
+        array[i] = i;
+    }
+    return array;
+}
 int main()
 {
-    int a[] = { 5, 7, -8, 9, 10, 4, -7, 0, -12, 1, 6, 2, 3, -4, -15, 12 };
-    int n = sizeof(a) / sizeof(a[0]);
+    int n = 50000000;
+    int *a = aleatorio(n);
+    //int *a = crescente(n);
  
     // obtém a profundidade máxima
     int limite = log(n) * 2;
  
     // ordena o array usando introsort o algoritmo
+    auto inicio = steady_clock::now();
+    
     introsort(a, a, a + n - 1, limite);
- 
+    
+    auto fim = steady_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(fim - inicio);
+    
+    printf("Tempo Introsort2: %f\n", (elapsed.count()/1e9));
+
     // imprime o array ordenado
-    for (int i = 0; i < n; i++) {
-        cout << a[i] << " ";
-    }
+    // for (int i = 0; i < n; i++) {
+    //     cout << a[i] << " ";
+    // }
  
     return 0;
 }
+*/
