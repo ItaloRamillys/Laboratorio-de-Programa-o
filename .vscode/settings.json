@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "new": "cpp",
+        "bitset": "cpp",
+        "chrono": "cpp",
+        "algorithm": "cpp",
+        "ostream": "cpp",
+        "iostream": "cpp"
+    }
+}
