@@ -15,7 +15,7 @@ struct nohHuf{
 };
 
 class Heap{
-public:
+  public:
   nohHeap *array;
   int n;
   int currentSize;
@@ -29,72 +29,85 @@ public:
       this->currentSize = size;
   }
 
-    void descer(int i) {
-      int m = i;
-      int l = 2 * i + 1;
-      int r = 2 * i + 2;
+  void inserir(nohHeap x){
+    n = n + 1;
 
-      if (l < currentSize && array[l].peso > array[m].peso)
-        m = l;
+    array[n] = x;
+    swap(array[0], array[n]);
 
-      if (r < currentSize && array[r].peso > array[m].peso)
-        m = r;
+    descer(0);
 
-      if (m != i) {
-        //cout << "Heap ja existe ate: " << this->currentSize << "\n";
-        //cout << "TROCA [" << array[i] << "," << array[m] << "]"
-        //     << "\n";
-        swap(array[i], array[m]);
-        descer(m);
+    // for(int index = 0; index < heapSize; index++){
+    //     cout << heap[index]->chave << " : " << heap[index]->qnt << " | ";
+    // }
+  }
+
+  void descer(int i) {
+    int m = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+
+    if (l < currentSize && array[l].peso > array[m].peso)
+      m = l;
+
+    if (r < currentSize && array[r].peso > array[m].peso)
+      m = r;
+
+    if (m != i) {
+      //cout << "Heap ja existe ate: " << this->currentSize << "\n";
+      //cout << "TROCA [" << array[i] << "," << array[m] << "]"
+      //     << "\n";
+      swap(array[i], array[m]);
+      descer(m);
+    }
+  }
+
+  void heapSort() {
+    constroiHeap();
+    while (this->currentSize > 0) {
+      //cout << "--------------------\n";
+      //minhaHeap();
+      //cout << "TROCA [" << array[0] << "," << array[this->currentSize - 1]
+      //    << "]"
+      //     << "\n";
+      swap(array[0], array[this->currentSize - 1]);
+      //cout << "HEAP APOS A TROCA\n";
+      //minhaHeap();
+      this->currentSize--;
+      //minhaHeap();
+      descer(0);
+      //cout << "--------------------\n";
+    }
+  }
+
+  void constroiHeap() {
+    for (int i = n / 2 - 1; i >= 0; i--) {
+      descer(i);
+    }
+  }
+
+  void minhaHeap() {
+    for (int i = 0; i < n; ++i){
+      cout << "[" << i << "]" << (char)this->array[i].ind << " -> " << this->array[i].peso;
+    }
+    cout << "\n";
+  }
+
+  nohHeap max(){
+      return array[0];
+  }
+
+  nohHeap extractMax(){
+      if (n < 1){
+          cout << "Heap underflow";
       }
-    }
+      nohHeap max = array[0];
+      array[0] = array[n-1];
+      n = n -1;
+      descer(0);
 
-    void heapSort() {
-      constroiHeap();
-      while (this->currentSize > 0) {
-        //cout << "--------------------\n";
-        //minhaHeap();
-        //cout << "TROCA [" << array[0] << "," << array[this->currentSize - 1]
-        //    << "]"
-        //     << "\n";
-        swap(array[0], array[this->currentSize - 1]);
-        //cout << "HEAP APOS A TROCA\n";
-        //minhaHeap();
-        this->currentSize--;
-        //minhaHeap();
-        descer(0);
-        //cout << "--------------------\n";
-      }
-    }
-
-    void constroiHeap() {
-      for (int i = n / 2 - 1; i >= 0; i--) {
-        descer(i);
-      }
-    }
-
-    void minhaHeap() {
-      for (int i = 0; i < n; ++i){
-        cout << "[" << i << "]" << (char)this->array[i].ind << " -> " << this->array[i].peso;
-      }
-      cout << "\n";
-    }
-
-    nohHeap max(){
-        return array[0];
-    }
-
-    nohHeap extractMax(){
-        if (n < 1){
-            cout << "Heap underflow";
-        }
-        nohHeap max = array[0];
-        array[0] = array[n-1];
-        n = n -1;
-        descer(0);
-
-        return max;
-    }
+      return max;
+  }
 };
 
 int main() {
@@ -162,7 +175,17 @@ int main() {
     Heap *h = new Heap(heap, ind);
     h->constroiHeap();
     h->minhaHeap();
-    cout << h->extractMax().peso;
+    cout << '\n';
+    cout << "\nMinha heap:\n";
+    cout << "Min: " << h->extractMax().peso;
+    cout << '\n';
+    h->minhaHeap();
+
+    nohHeap *nn = new nohHeap();
+    nn->ind = 255;
+    nn->peso = 2000;
+
+    h->inserir(*nn);
     h->minhaHeap();
 
     cout << "\nFim";
