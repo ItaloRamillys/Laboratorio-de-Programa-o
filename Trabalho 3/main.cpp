@@ -30,16 +30,20 @@ class Heap{
   }
 
   void inserir(nohHeap x){
-    n = n + 1;
-
+    
+    cout << "\nInserindo(" << this->n << "): " << x.ind << " - " << x.peso;
+    this->currentSize = this->currentSize + 1;
+    this->n = this->n + 1;
     array[n] = x;
+
+    minhaHeap();
+    
+    cout << "\nInicio:" << array[0].ind << '-' << array[0].peso;
+    cout << "\nFim:" << array[n].ind <<  '-' << array[n].peso;
     swap(array[0], array[n]);
+    minhaHeap();
 
     descer(0);
-
-    // for(int index = 0; index < heapSize; index++){
-    //     cout << heap[index]->chave << " : " << heap[index]->qnt << " | ";
-    // }
   }
 
   void descer(int i) {
@@ -47,10 +51,10 @@ class Heap{
     int l = 2 * i + 1;
     int r = 2 * i + 2;
 
-    if (l < currentSize && array[l].peso > array[m].peso)
+    if (l < currentSize && array[l].peso < array[m].peso)
       m = l;
 
-    if (r < currentSize && array[r].peso > array[m].peso)
+    if (r < currentSize && array[r].peso < array[m].peso)
       m = r;
 
     if (m != i) {
@@ -87,8 +91,9 @@ class Heap{
   }
 
   void minhaHeap() {
+    cout << "\nMinha HEAP("<< this->n<<"):\n";
     for (int i = 0; i < n; ++i){
-      cout << "[" << i << "]" << (char)this->array[i].ind << " -> " << this->array[i].peso;
+      cout << "[" << i << "]" << this->array[i].ind << "=>" << this->array[i].peso;
     }
     cout << "\n";
   }
@@ -97,22 +102,58 @@ class Heap{
       return array[0];
   }
 
-  nohHeap extractMax(){
-      if (n < 1){
+  nohHeap extractMin(){
+    cout << "\nExtraindo:";
+      if (this->n < 0){
           cout << "Heap underflow";
+          nohHeap *n = new nohHeap();
+          return *n;
+      }else{
+        nohHeap min = array[0];
+        array[0] = array[n-1];
+        this->n = this->n - 1;
+        this->currentSize = this->currentSize - 1;
+        descer(0);
+        minhaHeap();
+        return min;
       }
-      nohHeap max = array[0];
-      array[0] = array[n-1];
-      n = n -1;
-      descer(0);
-
-      return max;
   }
 };
 
+void comprimir(Heap *h, nohHuf *arv, int n)
+{
+  cout << "\nComprimindo: ";
+  h->minhaHeap();
+  int i = 0;
+  
+  nohHeap nohHeap1, nohHeap2, nohHeapInternal;
+  nohHuf nHuf;
+  
+  int nohInterno = 0;
+  while(h->currentSize > 0) 
+  {
+  cout << "\nTamanho da heap: " << h->n;
+    nohHeap1 = h->extractMin();
+    nohHeap2 = h->extractMin();
+    cout << "\n["<<nohHeap1.ind<<"]"<<nohHeap1.peso;
+    cout << " - ["<<nohHeap2.ind<<"]"<<nohHeap2.peso;
+
+    nHuf.esq = nohHeap1.ind;
+    nHuf.dir = nohHeap2.ind;
+
+    arv[n+i] = nHuf;
+    ++i;
+
+    nohHeapInternal.ind = 200+nohInterno; nohInterno++;
+    nohHeapInternal.peso = nohHeap1.peso + nohHeap2.peso;
+    h->inserir(nohHeapInternal);
+    h->minhaHeap();
+  }
+}
+
 int main() {
     
-    string nome = "../9_meu_exemplo.txt";
+    string nome = "../10_1a.txt";
 
     uint16_t *arrBytes = new uint16_t[256];
     for (int i = 0; i < 256; ++i){
@@ -155,7 +196,7 @@ int main() {
         if(arrBytes[i] > 0)
         {
             struct nohHeap noh;
-            noh.ind = i;
+            noh.ind = ind;
             noh.peso = arrBytes[i];
             heap[ind] = noh;
 
@@ -168,27 +209,30 @@ int main() {
 
     cout << "\nHeap";
     for (int i = 0; i < count; ++i){
-        cout << "\n[" << heap[i].ind << (char)heap[i].ind << "]: " << heap[i].peso;
+        cout << "\n[" << heap[i].ind << "]: " << heap[i].peso;
+    }
+
+    for (int i = 0; i < (2 * count)-1; ++i)
+    {
+      cout << "\n[" << i << "]";
+      cout << "Esq: " << arv[i].esq;
+      cout << " - Dir: " << arv[i].dir;
     }
     
-    cout << "\nMinha heap:\n";
     Heap *h = new Heap(heap, ind);
     h->constroiHeap();
     h->minhaHeap();
-    cout << '\n';
-    cout << "\nMinha heap:\n";
-    cout << "Min: " << h->extractMax().peso;
-    cout << '\n';
-    h->minhaHeap();
 
-    nohHeap *nn = new nohHeap();
-    nn->ind = 255;
-    nn->peso = 2000;
+    comprimir(h, arv, count);
 
-    h->inserir(*nn);
-    h->minhaHeap();
+    cout << "\nImprimindo a arvore:\n";
 
-    cout << "\nFim";
+    for (int i = 0; i < (2 * count)-1; ++i)
+    {
+      cout << "\n[" << i << "]";
+      cout << "Esq: " << arv[i].esq;
+      cout << " - Dir: " << arv[i].dir;
+    }
 
     return 0;
 }
