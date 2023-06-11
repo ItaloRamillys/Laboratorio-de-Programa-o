@@ -29,23 +29,6 @@ class Heap{
       this->currentSize = size;
   }
 
-  void inserir(nohHeap x){
-    
-    cout << "\nInserindo(" << this->n << "): " << x.ind << " - " << x.peso;
-    this->currentSize = this->currentSize + 1;
-    this->n = this->n + 1;
-    array[n] = x;
-
-    minhaHeap();
-    
-    cout << "\nInicio:" << array[0].ind << '-' << array[0].peso;
-    cout << "\nFim:" << array[n].ind <<  '-' << array[n].peso;
-    swap(array[0], array[n]);
-    minhaHeap();
-
-    descer(0);
-  }
-
   void descer(int i) {
     int m = i;
     int l = 2 * i + 1;
@@ -91,7 +74,7 @@ class Heap{
   }
 
   void minhaHeap() {
-    cout << "\nMinha HEAP("<< this->n<<"):\n";
+    cout << "\nMinha HEAP("<< this->currentSize << " - " << this->n <<"):\n";
     for (int i = 0; i < n; ++i){
       cout << "[" << i << "]" << this->array[i].ind << "=>" << this->array[i].peso;
     }
@@ -117,6 +100,30 @@ class Heap{
         minhaHeap();
         return min;
       }
+  }
+
+  void inserir(nohHeap x){
+    cout << "\nInserindo(" << this->n << "): " << x.ind << " - " << x.peso;
+    array[n] = x;
+    this->currentSize = this->n + 1;
+    this->n = this->n + 1;
+
+    minhaHeap();
+
+    cout << "\nN:" << this->n;
+    cout << "\nInicio:" << array[0].ind << '-' << array[0].peso;
+    cout << "\nFim:" << array[n-1].ind <<  '-' << array[n-1].peso;
+    cout << "\nAntes do swap:";
+    minhaHeap();
+    //swap(array[0], array[n-1]);
+    cout << "\nAntes de descer:";
+    minhaHeap();
+
+    descer(0);
+
+    cout << "\nDepois de descer:";
+
+    minhaHeap();
   }
 };
 
@@ -144,7 +151,7 @@ void comprimir(Heap *h, nohHuf *arv, int n)
     arv[n+i] = nHuf;
     ++i;
 
-    nohHeapInternal.ind = 200+nohInterno; nohInterno++;
+    nohHeapInternal.ind = n+nohInterno; nohInterno++;
     nohHeapInternal.peso = nohHeap1.peso + nohHeap2.peso;
     h->inserir(nohHeapInternal);
     h->minhaHeap();
@@ -232,6 +239,15 @@ int main() {
       cout << "\n[" << i << "]";
       cout << "Esq: " << arv[i].esq;
       cout << " - Dir: " << arv[i].dir;
+    }
+
+    cout << '\n';
+
+    for (int i = 0; i < (2 * count)-1; ++i)
+    {
+      cout << "\n[" << i << "]";
+      cout << "Esq: " << (char)arv[i].esq;
+      cout << " - Dir: " << (char)arv[i].dir;
     }
 
     return 0;
