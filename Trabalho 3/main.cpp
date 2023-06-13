@@ -1,8 +1,12 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <string>
+#include <map>
 
 using namespace std;
+typedef map<char, string> charToBinMap;
+
 //using namespace chrono;
 
 struct nohHeap{
@@ -103,34 +107,35 @@ class Heap{
   }
 
   void inserir(nohHeap x){
-    cout << "\nInserindo(" << this->n << "): " << x.ind << " - " << x.peso;
+    // cout << "\nInserindo(" << this->n << "): " << x.ind << " - " << x.peso;
     array[n] = x;
     this->currentSize = this->n + 1;
     this->n = this->n + 1;
 
-    minhaHeap();
+    //minhaHeap();
 
-    cout << "\nN:" << this->n;
-    cout << "\nInicio:" << array[0].ind << '-' << array[0].peso;
-    cout << "\nFim:" << array[n-1].ind <<  '-' << array[n-1].peso;
-    cout << "\nAntes do swap:";
-    minhaHeap();
-    //swap(array[0], array[n-1]);
-    cout << "\nAntes de descer:";
-    minhaHeap();
+    // cout << "\nN:" << this->n;
+    // cout << "\nInicio:" << array[0].ind << '-' << array[0].peso;
+    // cout << "\nFim:" << array[n-1].ind <<  '-' << array[n-1].peso;
+    // cout << "\nAntes do swap:";
+    //minhaHeap();
+    swap(array[0], array[n-1]);
+    // cout << "\nAntes de descer:";
+    //minhaHeap();
 
     descer(0);
 
-    cout << "\nDepois de descer:";
+    // cout << "\nDepois de descer:";
 
-    minhaHeap();
+    //minhaHeap();
   }
 };
 
-void comprimir(Heap *h, nohHuf *arv, int n)
+void comprimir(Heap *h, nohHuf *arv, int x)
 {
+  int n = x;
   cout << "\nComprimindo: ";
-  h->minhaHeap();
+  //h->minhaHeap();
   int i = 0;
   
   nohHeap nohHeap1, nohHeap2, nohHeapInternal;
@@ -139,11 +144,11 @@ void comprimir(Heap *h, nohHuf *arv, int n)
   int nohInterno = 0;
   while(h->currentSize > 0) 
   {
-  cout << "\nTamanho da heap: " << h->n;
+    //cout << "\nTamanho da heap: " << h->n;
     nohHeap1 = h->extractMin();
     nohHeap2 = h->extractMin();
-    cout << "\n["<<nohHeap1.ind<<"]"<<nohHeap1.peso;
-    cout << " - ["<<nohHeap2.ind<<"]"<<nohHeap2.peso;
+    // cout << "\n["<<nohHeap1.ind<<"]"<<nohHeap1.peso;
+    // cout << " - ["<<nohHeap2.ind<<"]"<<nohHeap2.peso;
 
     nHuf.esq = nohHeap1.ind;
     nHuf.dir = nohHeap2.ind;
@@ -154,13 +159,38 @@ void comprimir(Heap *h, nohHuf *arv, int n)
     nohHeapInternal.ind = n+nohInterno; nohInterno++;
     nohHeapInternal.peso = nohHeap1.peso + nohHeap2.peso;
     h->inserir(nohHeapInternal);
-    h->minhaHeap();
+    //h->minhaHeap();
   }
 }
 
-int main() {
+charToBinMap generateBin(charToBinMap binMap, nohHuf *arv, int i, int count, string cod)
+{
+    int esq, dir;
     
-    string nome = "../10_1a.txt";
+    //cout << "\nComecando de " << ((2 * count) - 2);
+    // cout << "\nIndice: " << i << ".";
+    esq = arv[i].esq;
+    dir = arv[i].dir;
+    // cout << "\nEsq: " << esq;
+    // cout << "\nDir: " << dir;
+    // cout << "\nByte: " << byte;
+    
+    if(i <= (count/2))
+    {
+      binMap[arv[i].esq] = cod;
+    }else
+    {
+      binMap = generateBin(binMap, arv, esq, count, cod+'0');
+      binMap = generateBin(binMap, arv, dir, count, cod+'1');
+    }
+
+    return binMap;
+
+}
+
+int main() {
+
+    string nome = "../9_meu_exemplo.txt";
 
     uint16_t *arrBytes = new uint16_t[256];
     for (int i = 0; i < 256; ++i){
@@ -196,7 +226,9 @@ int main() {
     struct nohHeap* heap = (struct nohHeap*) malloc(count * sizeof(struct nohHeap));
     //struct nohHuf* arv = (struct nohHuf*) malloc((2 * count * sizeof(struct nohHuf)) - 1);
 
-    nohHuf *arv = new nohHuf[(2 * count * sizeof(struct nohHuf)) - 1];
+    struct nohHuf *arv = (struct nohHuf*) malloc(2 * count * sizeof(struct nohHuf) - sizeof(struct nohHuf));
+    
+    int totalElArv = (2 * count)-2;
 
     int ind = 0;
     for (int i = 0; i < 256; ++i){
@@ -243,11 +275,28 @@ int main() {
 
     cout << '\n';
 
-    for (int i = 0; i < (2 * count)-1; ++i)
+    // for (int i = 0; i < (2 * count)-1; ++i)
+    // {
+    //   cout << "\n[" << i << "]";
+    //   cout << "Esq: " << (char)arv[i].esq;
+    //   cout << " - Dir: " << (char)arv[i].dir;
+    // }
+
+    arq.clear();
+    arq.seekg(0, ios::beg);
+    string cadeia = "";
+
+    charToBinMap cod;
+    cod = generateBin(cod, arv, totalElArv, totalElArv, "");
+
+    char x;
+    while(!arq.eof())
     {
-      cout << "\n[" << i << "]";
-      cout << "Esq: " << (char)arv[i].esq;
-      cout << " - Dir: " << (char)arv[i].dir;
+      cadeia = {};
+      x = arq.get();
+      cout << "\nChar: " << x;
+      cout << "\nCodigo: ";
+      cout << cod[(int)x];
     }
 
     return 0;
