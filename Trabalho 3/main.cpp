@@ -289,7 +289,15 @@ int main() {
     charToBinMap cod;
     cod = generateBin(cod, arv, totalElArv, totalElArv, "");
 
+    string nomeArquivoSaida = "meuExemplo.huf";
+
+    ofstream arquivoSaida;
+
+    arquivoSaida.open(nomeArquivoSaida, std::ios::binary);
+
     char x;
+
+    arquivoSaida.write((char*)arv, (2*count - 1)*sizeof(nohHuf));
     while(!arq.eof())
     {
       cadeia = {};
@@ -297,7 +305,31 @@ int main() {
       cout << "\nChar: " << x;
       cout << "\nCodigo: ";
       cout << cod[(int)x];
+      arquivoSaida.write((char*)cod[(int)x].c_str(), cod[(int)x].size());
     }
+    
+    arquivoSaida.close();
+
+    char * buffer;
+    long size;
+    ifstream file ("output/meuExemplo.huf", ios::in|ios::binary|ios::ate);
+    size = file.tellg();
+    file.seekg (0, ios::beg);
+    cout << "\nTamanho: " << size;
+    buffer = new char [size];
+    file.read (buffer, size);
+    
+    for (int i = 0; i < size; i++)
+    {
+      cout << buffer[i];
+    }
+    
+
+    file.close();
+
+    cout << "\nthe complete file is in a buffer";
+
+    delete[] buffer;
 
     return 0;
 }
