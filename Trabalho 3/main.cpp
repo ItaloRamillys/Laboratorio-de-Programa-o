@@ -190,7 +190,8 @@ charToBinMap generateBin(charToBinMap binMap, nohHuf *arv, int i, int count, str
 
 int main() {
 
-    string nome = "../9_meu_exemplo.txt";
+    string nomeInOut = "8_linha_exponencial_ate_t";
+    string nome = "../" + nomeInOut + ".txt";
 
     uint16_t *arrBytes = new uint16_t[256];
     for (int i = 0; i < 256; ++i){
@@ -211,7 +212,7 @@ int main() {
     {
         c =  arq.get();
         byte = (int) c;
-        cout << '\n' << byte;
+        // cout << '\n' << byte;
         arrBytes[byte] = arrBytes[byte] + 1;
     }
 
@@ -220,7 +221,7 @@ int main() {
     for (int i = 0; i < 256; ++i){
         if(arrBytes[i] > 0)
             count++;
-        cout << '\n' << (char)i << ':' << arrBytes[i];
+        // cout << '\n' << (char)i << ':' << arrBytes[i];
     }
     
     struct nohHeap* heap = (struct nohHeap*) malloc(count * sizeof(struct nohHeap));
@@ -241,6 +242,7 @@ int main() {
 
             struct nohHuf nohHu;
             nohHu.esq = i;
+            nohHu.dir = 0;
             arv[ind] = nohHu;
             ind++;
         }
@@ -248,19 +250,19 @@ int main() {
 
     cout << "\nHeap";
     for (int i = 0; i < count; ++i){
-        cout << "\n[" << heap[i].ind << "]: " << heap[i].peso;
+        // cout << "\n[" << heap[i].ind << "]: " << heap[i].peso;
     }
 
     for (int i = 0; i < (2 * count)-1; ++i)
     {
-      cout << "\n[" << i << "]";
-      cout << "Esq: " << arv[i].esq;
-      cout << " - Dir: " << arv[i].dir;
+      // cout << "\n[" << i << "]";
+      // cout << "Esq: " << arv[i].esq;
+      // cout << " - Dir: " << arv[i].dir;
     }
     
     Heap *h = new Heap(heap, ind);
     h->constroiHeap();
-    h->minhaHeap();
+    // h->minhaHeap();
 
     comprimir(h, arv, count);
 
@@ -289,7 +291,7 @@ int main() {
     charToBinMap cod;
     cod = generateBin(cod, arv, totalElArv, totalElArv, "");
 
-    string nomeArquivoSaida = "meuExemplo.huf";
+    string nomeArquivoSaida = nomeInOut + ".huf";
 
     ofstream arquivoSaida;
 
@@ -297,31 +299,78 @@ int main() {
 
     char x;
 
+    arquivoSaida.write(reinterpret_cast<const char *>(&count), sizeof(count));
+
     arquivoSaida.write((char*)arv, (2*count - 1)*sizeof(nohHuf));
     while(!arq.eof())
     {
       cadeia = {};
       x = arq.get();
-      cout << "\nChar: " << x;
-      cout << "\nCodigo: ";
-      cout << cod[(int)x];
+      // cout << "\nChar: " << x;
+      // cout << "\nCodigo: ";
+      // cout << cod[(int)x];
       arquivoSaida.write((char*)cod[(int)x].c_str(), cod[(int)x].size());
     }
     
     arquivoSaida.close();
 
-    char * buffer;
-    long size;
-    ifstream file ("output/meuExemplo.huf", ios::in|ios::binary|ios::ate);
-    size = file.tellg();
-    file.seekg (0, ios::beg);
-    cout << "\nTamanho: " << size;
-    buffer = new char [size];
-    file.read (buffer, size);
+    // char* buffer;
+    // long size;
+    // ifstream file ("meuExemplo.huf", ios::in|ios::binary|ios::ate);
+    // size = file.tellg();
+    // file.seekg (0, ios::beg);
+    // cout << "\nTamanho: " << size << "\n";
+    // buffer = new char[size];
+    // file.read (buffer, size);
     
-    for (int i = 0; i < size; i++)
+    ifstream file;
+
+    file.open(nomeArquivoSaida, ios::binary);
+
+    //vector<unsigned char> bytes;
+    //for (int i = 0; i < size; i++)
+    
+    unsigned char byteRead;
+    file >> byteRead;
+    int countChars = (int)byteRead;
+    
+    struct nohHuf *arvRead = (struct nohHuf*) malloc(2 * countChars * sizeof(struct nohHuf) - sizeof(struct nohHuf));
+
+    cout << "\nTamanho da arvore: " << countChars << "\n\n";
+
+    for (int i = 0; i < 2 * countChars - 1; i++)
     {
-      cout << buffer[i];
+      file >> byteRead;
+      arvRead[i].esq = (uint16_t)byteRead;
+      file >> byteRead;
+      arvRead[i+1].dir = (uint16_t)byteRead;
+    }
+
+    cout << "\nImprimindo a arvore para leitura:\n";
+
+    for (int i = 0; i < (2 * count)-1; ++i)
+    {
+      cout << "\n[" << i << "]";
+      cout << "Esq: " << arv[i].esq;
+      cout << " - Dir: " << arv[i].dir;
+    }
+
+    cout << '\n';
+    
+    while (!file.eof())
+    {
+      file >> byteRead;
+
+      if (file.fail())
+      {
+        cout << "Error read";
+          //error
+          break;
+      }
+
+      //bytes.push_back(byte);
+      //cout << buffer[i];
+      cout << byteRead;
     }
     
 
@@ -329,7 +378,7 @@ int main() {
 
     cout << "\nthe complete file is in a buffer";
 
-    delete[] buffer;
+    //delete[] buffer;
 
     return 0;
 }
