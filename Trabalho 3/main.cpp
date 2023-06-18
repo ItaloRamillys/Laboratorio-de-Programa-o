@@ -301,7 +301,13 @@ int main() {
 
     arquivoSaida.write(reinterpret_cast<const char *>(&count), sizeof(count));
 
-    arquivoSaida.write((char*)arv, (2*count - 1)*sizeof(nohHuf));
+    //arquivoSaida.write(reinterpret_cast<const char *>(&arv), (2*count - 1)*sizeof(nohHuf));
+    
+    for (int i = 0; i < (2 * count)-1; ++i)
+    {
+      arquivoSaida.write(reinterpret_cast<const char *>(&arv[i].esq), sizeof(nohHuf::esq));
+      arquivoSaida.write(reinterpret_cast<const char *>(&arv[i+1].dir), sizeof(nohHuf::dir));
+    }
     while(!arq.eof())
     {
       cadeia = {};
@@ -332,34 +338,46 @@ int main() {
     
     unsigned char byteRead;
     file >> byteRead;
+    cout << byteRead;
     int countChars = (int)byteRead;
     
-    struct nohHuf *arvRead = (struct nohHuf*) malloc(2 * countChars * sizeof(struct nohHuf) - sizeof(struct nohHuf));
-
+    // nohHuf arvRead;
     cout << "\nTamanho da arvore: " << countChars << "\n\n";
 
-    for (int i = 0; i < 2 * countChars - 1; i++)
-    {
-      file >> byteRead;
-      arvRead[i].esq = (uint16_t)byteRead;
-      file >> byteRead;
-      arvRead[i+1].dir = (uint16_t)byteRead;
-    }
+    //file.read(reinterpret_cast<char*>(&arvRead), (2*count - 1)*sizeof(nohHuf));
+    // cout << "\nTELLG: " << file.tellg();
 
+    nohHuf arvRead; 
+    file.read(reinterpret_cast<char*>(&arvRead.esq), sizeof(nohHuf::esq)); 
+    file.read(reinterpret_cast<char*>(&arvRead.dir), sizeof(nohHuf::dir));
+
+    cout << "Read: i=" << arvRead.esq << " d=" << arvRead.dir << std::endl;
     cout << "\nImprimindo a arvore para leitura:\n";
 
-    for (int i = 0; i < (2 * count)-1; ++i)
-    {
-      cout << "\n[" << i << "]";
-      cout << "Esq: " << arv[i].esq;
-      cout << " - Dir: " << arv[i].dir;
-    }
+    // for (int i = 0; i < (2 * count)-1; ++i)
+    // {
+    //   cout << "\n[" << i << "]";
+    //   cout << "Esq: " << arvRead[i].esq;
+    //   cout << " - Dir: " << arvRead[i].dir;
+    // }
+    
+    cout << '\n';
+
+    char ch;
+    while (file.get(ch))          // loop getting single characters
+      std::cout << ch;
+    
 
     cout << '\n';
-    
+    int startBin = (2 * count);
+    int j = 0;
+    int root;
     while (!file.eof())
     {
+      //cout << "\nPosicao no arquivo: " << j;
       file >> byteRead;
+      cout << byteRead;
+      //cout << "\nByte lido: " << (char)byteRead;
 
       if (file.fail())
       {
@@ -369,15 +387,30 @@ int main() {
       }
 
       //bytes.push_back(byte);
-      //cout << buffer[i];
-      cout << byteRead;
+      // //cout << buffer[i];
+      // cout << "\nPos: "  << j;
+      //cout << "\n" << byteRead;
+      //cout << "\nRoot: " << root;
+      
+      //   cout << "\nJ: " << j << " - Start: " << startBin;
+      //   while (root >= count)
+      //   {
+      //     if(byteRead == 0){
+      //       cout << "\nByte 0";
+      //       root = arvRead[root].esq;
+      //     }
+      //     else if(byteRead == 1){
+      //       cout << "\nByte 0";
+      //       root = arvRead[root].dir;
+      //     }
+      //     cout<<"\nRoot atual: " << root;
+      //   }
+
+      // cout << "Char: " << (char)arvRead[root].esq;
+      j++;
     }
-    
 
     file.close();
-
-    cout << "\nthe complete file is in a buffer";
-
     //delete[] buffer;
 
     return 0;
