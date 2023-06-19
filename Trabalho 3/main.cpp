@@ -195,7 +195,7 @@ int main() {
     //3_vazio
     //4_texto_6_mega
     //8_linha_exponencial_ate_t
-    string nomeInOut = "8_linha_exponencial_ate_t";
+    string nomeInOut = "1_6_chars";
     string ext = ".txt";
     string nome = "../" + nomeInOut + ext;
     int countBytes = 0;
@@ -317,7 +317,6 @@ int main() {
 
     int n = 0;
     while (countBytesCopy > 0) {
-        cout << "\nCount: " << countBytesCopy;
         countBytesCopy >>= 8;
         n++;
     }
@@ -326,6 +325,7 @@ int main() {
     arquivoSaida.write(reinterpret_cast<const char *>(&count), 1);
     arquivoSaida.write(reinterpret_cast<const char *>(&countBytes), n);
     arquivoSaida.write(reinterpret_cast<const char *>(&arv), (2*count - 1)*sizeof(nohHuf));
+    arquivoSaida.write(reinterpret_cast<const char *>(&count), 1);
     
     // for (int i = 0; i < (2 * count)-1; ++i)
     // {
@@ -342,14 +342,31 @@ int main() {
       // cout << cod[(int)x];
       //F = (uint8_t)cod[(int)x];
       code = cod[(int)x];
-      cout << code;
-      // for (int i = 0; i < code.length(); i++) {
+      //cout << "\nCode: " <<  code;
+
+//CONTAR Ate juntar 8 bits e salva-los como 1 byte
+
+      for (int i = 0; i < code.length(); i++) {
+        if(code[i] == '0')
+          arquivoSaida.put(false);
+        if(code[i] == '1')
+          arquivoSaida.put(true);
+      }
+      // for (std::size_t i = 0; i < code.size(); ++i)
+      // { 
       //   if(code[i] == '0')
-      //     arquivoSaida.put((unsigned char) 0);
-      //   if(code[i] == '1')
-      //     arquivoSaida.put((unsigned char) 1);
+      //     arquivoSaida << false;
+      //   else
+      //     arquivoSaida << true;
       // }
-      arquivoSaida << static_cast<uint_fast8_t>(bitset<8>(code).to_ulong());
+      // std::bitset<sizeof(unsigned char) * 1> bits(code);
+
+      // unsigned char binary_value = bits.to_ulong();
+
+      // // write the binary value to file
+      // arquivoSaida.write((const char*)&binary_value, sizeof(unsigned char));
+      //cout << "\nBit: " <<  bitset<8>(code).to_ulong();
+      //arquivoSaida << bitset<8>(code[i]);
       //arquivoSaida.write((char*)cod[(int)x].c_str(), cod[(int)x].size());
       //arquivoSaida.put((char*)cod[(int)x]);
     }
@@ -379,6 +396,10 @@ int main() {
     
     // nohHuf arvRead;
     cout << "\nTamanho da arvore: " << countChars << "\n\n";
+
+    file >> byteRead;
+    int countBytesFile = (int)byteRead;
+    cout << "\nTamanho do arquivo origem: " << countBytesFile << "\n\n";
 
     nohHuf *arvRead; 
     file.read(reinterpret_cast<char*>(&arvRead), (2*countChars - 1)*sizeof(nohHuf));
