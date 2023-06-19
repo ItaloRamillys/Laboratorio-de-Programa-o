@@ -2,6 +2,7 @@
 #include <iostream>
 #include <limits>
 #include <string>
+#include <bitset>
 #include <map>
 
 using namespace std;
@@ -189,11 +190,17 @@ charToBinMap generateBin(charToBinMap binMap, nohHuf *arv, int i, int count, str
 }
 
 int main() {
-
+    //1_6_chars
+    //2_100_as
+    //3_vazio
+    //4_texto_6_mega
+    //8_linha_exponencial_ate_t
     string nomeInOut = "8_linha_exponencial_ate_t";
-    string nome = "../" + nomeInOut + ".txt";
+    string ext = ".txt";
+    string nome = "../" + nomeInOut + ext;
+    int countBytes = 0;
 
-    uint16_t *arrBytes = new uint16_t[256];
+    int *arrBytes = new int[256];
     for (int i = 0; i < 256; ++i){
         arrBytes[i] = 0;
     }
@@ -210,24 +217,31 @@ int main() {
     cout << "Caracteres do arquivo:\n";
     while(!arq.eof())
     {
-        c =  arq.get();
-        byte = (int) c;
-        // cout << '\n' << byte;
-        arrBytes[byte] = arrBytes[byte] + 1;
+      c =  arq.get();
+      if((int)c == 255) break;
+      byte = (int) c;
+      // cout << '\n' << byte;
+      arrBytes[byte] = arrBytes[byte] + 1;
+      countBytes++;
     }
+    
 
     cout << "\nContagem de cada caracter:\n";
     int count = 0;
     for (int i = 0; i < 256; ++i){
+        cout<<"\nVerificando: "<< i << "-" << (char)i;
         if(arrBytes[i] > 0)
-            count++;
+        {
+          cout<<"\nCaracter encontrado: " << (char)i;
+          count++;
+        }
         // cout << '\n' << (char)i << ':' << arrBytes[i];
     }
     
     struct nohHeap* heap = (struct nohHeap*) malloc(count * sizeof(struct nohHeap));
     //struct nohHuf* arv = (struct nohHuf*) malloc((2 * count * sizeof(struct nohHuf)) - 1);
 
-    struct nohHuf *arv = (struct nohHuf*) malloc(2 * count * sizeof(struct nohHuf) - sizeof(struct nohHuf));
+    struct nohHuf *arv = (struct nohHuf*) malloc((2 * count - 1) * sizeof(struct nohHuf));
     
     int totalElArv = (2 * count)-2;
 
@@ -286,8 +300,7 @@ int main() {
 
     arq.clear();
     arq.seekg(0, ios::beg);
-    string cadeia = "";
-
+    
     charToBinMap cod;
     cod = generateBin(cod, arv, totalElArv, totalElArv, "");
 
@@ -299,23 +312,46 @@ int main() {
 
     char x;
 
-    arquivoSaida.write(reinterpret_cast<const char *>(&count), sizeof(count));
+    int countBytesCopy = countBytes;
+    cout << "\nTamanho arquivo: " << countBytes;
 
-    //arquivoSaida.write(reinterpret_cast<const char *>(&arv), (2*count - 1)*sizeof(nohHuf));
-    
-    for (int i = 0; i < (2 * count)-1; ++i)
-    {
-      arquivoSaida.write(reinterpret_cast<const char *>(&arv[i].esq), sizeof(nohHuf::esq));
-      arquivoSaida.write(reinterpret_cast<const char *>(&arv[i+1].dir), sizeof(nohHuf::dir));
+    int n = 0;
+    while (countBytesCopy > 0) {
+        cout << "\nCount: " << countBytesCopy;
+        countBytesCopy >>= 8;
+        n++;
     }
+
+    cout << "\nBytes necessarios arquivo: " << n;
+    arquivoSaida.write(reinterpret_cast<const char *>(&count), 1);
+    arquivoSaida.write(reinterpret_cast<const char *>(&countBytes), n);
+    arquivoSaida.write(reinterpret_cast<const char *>(&arv), (2*count - 1)*sizeof(nohHuf));
+    
+    // for (int i = 0; i < (2 * count)-1; ++i)
+    // {
+    //   arquivoSaida.write(reinterpret_cast<const char *>(&arv[i].esq), sizeof(nohHuf::esq));
+    //   arquivoSaida.write(reinterpret_cast<const char *>(&arv[i+1].dir), sizeof(nohHuf::dir));
+    // }
+    cout << "\n\n";
+    string code;
     while(!arq.eof())
     {
-      cadeia = {};
       x = arq.get();
       // cout << "\nChar: " << x;
       // cout << "\nCodigo: ";
       // cout << cod[(int)x];
-      arquivoSaida.write((char*)cod[(int)x].c_str(), cod[(int)x].size());
+      //F = (uint8_t)cod[(int)x];
+      code = cod[(int)x];
+      cout << code;
+      // for (int i = 0; i < code.length(); i++) {
+      //   if(code[i] == '0')
+      //     arquivoSaida.put((unsigned char) 0);
+      //   if(code[i] == '1')
+      //     arquivoSaida.put((unsigned char) 1);
+      // }
+      arquivoSaida << static_cast<uint_fast8_t>(bitset<8>(code).to_ulong());
+      //arquivoSaida.write((char*)cod[(int)x].c_str(), cod[(int)x].size());
+      //arquivoSaida.put((char*)cod[(int)x]);
     }
     
     arquivoSaida.close();
@@ -338,45 +374,44 @@ int main() {
     
     unsigned char byteRead;
     file >> byteRead;
-    cout << byteRead;
+    
     int countChars = (int)byteRead;
     
     // nohHuf arvRead;
     cout << "\nTamanho da arvore: " << countChars << "\n\n";
 
-    //file.read(reinterpret_cast<char*>(&arvRead), (2*count - 1)*sizeof(nohHuf));
+    nohHuf *arvRead; 
+    file.read(reinterpret_cast<char*>(&arvRead), (2*countChars - 1)*sizeof(nohHuf));
     // cout << "\nTELLG: " << file.tellg();
 
-    nohHuf arvRead; 
-    file.read(reinterpret_cast<char*>(&arvRead.esq), sizeof(nohHuf::esq)); 
-    file.read(reinterpret_cast<char*>(&arvRead.dir), sizeof(nohHuf::dir));
+    // file.read(reinterpret_cast<char*>(&arvRead.esq), sizeof(nohHuf::esq)); 
+    // file.read(reinterpret_cast<char*>(&arvRead.dir), sizeof(nohHuf::dir));
 
-    cout << "Read: i=" << arvRead.esq << " d=" << arvRead.dir << std::endl;
     cout << "\nImprimindo a arvore para leitura:\n";
 
-    // for (int i = 0; i < (2 * count)-1; ++i)
-    // {
-    //   cout << "\n[" << i << "]";
-    //   cout << "Esq: " << arvRead[i].esq;
-    //   cout << " - Dir: " << arvRead[i].dir;
-    // }
+    for (int i = 0; i < (2 * count)-1; ++i)
+    {
+      cout << "\n[" << i << "]";
+      cout << "Esq: " << arvRead[i].esq;
+      cout << " - Dir: " << arvRead[i].dir;
+    }
     
     cout << '\n';
 
-    char ch;
-    while (file.get(ch))          // loop getting single characters
-      std::cout << ch;
+    // char ch;
+    // while (file.get(ch))          // loop getting single characters
+    //   std::cout << ch;
     
 
     cout << '\n';
-    int startBin = (2 * count);
+    //int startBin = (2 * count);
     int j = 0;
-    int root;
+    //int root;
     while (!file.eof())
     {
       //cout << "\nPosicao no arquivo: " << j;
       file >> byteRead;
-      cout << byteRead;
+      //cout << byteRead;
       //cout << "\nByte lido: " << (char)byteRead;
 
       if (file.fail())
