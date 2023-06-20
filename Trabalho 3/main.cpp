@@ -102,7 +102,7 @@ class Heap{
         this->n = this->n - 1;
         this->currentSize = this->currentSize - 1;
         descer(0);
-        minhaHeap();
+        //minhaHeap();
         return min;
       }
   }
@@ -195,7 +195,7 @@ int main() {
     //3_vazio
     //4_texto_6_mega
     //8_linha_exponencial_ate_t
-    string nomeInOut = "1_6_chars";
+    string nomeInOut = "8_linha_exponencial_ate_t";
     string ext = ".txt";
     string nome = "../" + nomeInOut + ext;
     int countBytes = 0;
@@ -239,8 +239,6 @@ int main() {
     }
     
     struct nohHeap* heap = (struct nohHeap*) malloc(count * sizeof(struct nohHeap));
-    //struct nohHuf* arv = (struct nohHuf*) malloc((2 * count * sizeof(struct nohHuf)) - 1);
-
     struct nohHuf *arv = (struct nohHuf*) malloc((2 * count - 1) * sizeof(struct nohHuf));
     
     int totalElArv = (2 * count)-2;
@@ -262,10 +260,10 @@ int main() {
         }
     }
 
-    cout << "\nHeap";
-    for (int i = 0; i < count; ++i){
-        // cout << "\n[" << heap[i].ind << "]: " << heap[i].peso;
-    }
+    // cout << "\nHeap";
+    // for (int i = 0; i < count; ++i){
+    //     // cout << "\n[" << heap[i].ind << "]: " << heap[i].peso;
+    // }
 
     for (int i = 0; i < (2 * count)-1; ++i)
     {
@@ -325,7 +323,6 @@ int main() {
     arquivoSaida.write(reinterpret_cast<const char *>(&count), 1);
     arquivoSaida.write(reinterpret_cast<const char *>(&countBytes), n);
     arquivoSaida.write(reinterpret_cast<const char *>(&arv), (2*count - 1)*sizeof(nohHuf));
-    arquivoSaida.write(reinterpret_cast<const char *>(&count), 1);
     
     // for (int i = 0; i < (2 * count)-1; ++i)
     // {
@@ -334,6 +331,16 @@ int main() {
     // }
     cout << "\n\n";
     string code;
+
+    int countByte = 0; // um contador para indicar se já foi lido 8 bits, aí se sim eu gravo o byte localizado na var abaixo
+    char byteToWrite = 0; // responsável por guardar o byte a ser armazenado no arquivo -> passará por um processo de "apendação" dos codigos relacionados aos caracteres até completar 8 bits
+    char extrabits = 0; // serve para informar a quantidade de bits que precisou para preencher o ultimo byte do arquivo
+    int numBytes = 0; // serve para informar o número de bytes gravados no arquivo
+    streamoff extraBitsAddress = arquivoSaida.tellp(); // pega a "posicao" da var extrabits no arquivo, pois será necessário modifica-la no final
+    arquivoSaida.write(&extrabits, sizeof(char));
+    streamoff numBytesAddress = arquivoSaida.tellp(); // pega a "posicao" da var numBytes no arquivo, pois será necessário modifica-la no final
+    arquivoSaida.write((char*)&numBytes, sizeof(int));
+
     while(!arq.eof())
     {
       x = arq.get();
@@ -343,34 +350,36 @@ int main() {
       //F = (uint8_t)cod[(int)x];
       code = cod[(int)x];
       //cout << "\nCode: " <<  code;
-
-//CONTAR Ate juntar 8 bits e salva-los como 1 byte
-
-      for (int i = 0; i < code.length(); i++) {
-        if(code[i] == '0')
-          arquivoSaida.put(false);
-        if(code[i] == '1')
-          arquivoSaida.put(true);
+      //cout << "\nDecodificando: " << code;
+      for(int i = 0; i < code.length(); i++){
+          if(countByte == 8){
+              if(arq.eof()) break;
+              arquivoSaida.write(&byteToWrite, sizeof(char));
+              countByte = 0;
+              byteToWrite = 0;
+              numBytes++;
+          }  
+          // processo de apendação de bits no byteToWrite
+          byteToWrite = byteToWrite << 1; 
+          if(code[i] == '1') byteToWrite = byteToWrite | (char) 1;
+          countByte++;
       }
-      // for (std::size_t i = 0; i < code.size(); ++i)
-      // { 
-      //   if(code[i] == '0')
-      //     arquivoSaida << false;
-      //   else
-      //     arquivoSaida << true;
-      // }
-      // std::bitset<sizeof(unsigned char) * 1> bits(code);
-
-      // unsigned char binary_value = bits.to_ulong();
-
-      // // write the binary value to file
-      // arquivoSaida.write((const char*)&binary_value, sizeof(unsigned char));
-      //cout << "\nBit: " <<  bitset<8>(code).to_ulong();
-      //arquivoSaida << bitset<8>(code[i]);
-      //arquivoSaida.write((char*)cod[(int)x].c_str(), cod[(int)x].size());
-      //arquivoSaida.put((char*)cod[(int)x]);
+      //CONTAR Ate juntar 8 bits e salva-los como 1 byte
     }
     
+    if(countByte != 8){ // processo de ver a qnt de bits extras e armazenas na posicao pegada la em cima
+        extrabits = (char) 8 - countByte; // simboliza o tanto de bits que falta escrever pra completar 1 byte
+        numBytes++; // o ultimo byte vai ser o completado
+        cout << "\nQuantidade de bits extras utilizados: " << (int) extrabits << endl;
+        cout << "\nQuantidade de Bytes gravados: " << numBytes << endl;
+        byteToWrite = byteToWrite << extrabits; // da um shiftada do tanto de extrabits
+        arquivoSaida.write((char*)&byteToWrite, sizeof(char));
+        arquivoSaida.seekp(extraBitsAddress); //atualizando o valor correto do extrabits no arquivo
+        arquivoSaida.write(&extrabits, sizeof(char));
+        arquivoSaida.seekp(numBytesAddress); //atualizando o valor correto da var numBytes no arquivo
+        arquivoSaida.write((char*)&numBytes, sizeof(int));
+    }
+
     arquivoSaida.close();
 
     // char* buffer;
