@@ -1,7 +1,6 @@
 #include <fstream>
 #include <iostream>
-#include <limits> 
-#include<array> 
+#include <limits>
 #include <string>
 #include <bitset>
 #include <chrono>
@@ -226,7 +225,7 @@ void compress(string inputFileName, string outputFileName)
     if(!countBytes){ cout << "\nArquivo vazio"; return; }//Se o arquivo é vazio basta criar um outro arquivo vazio
 
     cout << "\nContagem de cada caracter:\n";
-    uint16_t count = 0;
+    int count = 0;
     uint16_t firstByte;
     bool firstByteFound = false;
     for (int i = 0; i < 256; ++i){
@@ -264,10 +263,9 @@ void compress(string inputFileName, string outputFileName)
       return; 
     }
     
-    int p = 2 * count - 1;
-    struct nohHeap * heap = (struct nohHeap*) malloc(count * sizeof(struct nohHeap));
-    struct nohHuf arv[p];
-
+    struct nohHeap* heap = (struct nohHeap*) malloc(count * sizeof(struct nohHeap));
+    struct nohHuf *arv = (struct nohHuf*) malloc((2 * count - 1) * sizeof(struct nohHuf));
+    
     int totalElArv = (2 * count)-2;
 
     int ind = 0;
@@ -305,6 +303,9 @@ void compress(string inputFileName, string outputFileName)
     }
     cout << '\n';
     
+    charToBinMap cod;
+    cod = generateBin(cod, arv, totalElArv, totalElArv, "");
+
     int countBytesCopy = countBytes;
     cout << "\nTamanho arquivo: " << countBytes;
 
@@ -327,14 +328,10 @@ void compress(string inputFileName, string outputFileName)
     char byteToWrite = 0;
     char extrabits = 0; 
     int numBytes = 0; 
-
-    outputFile.write(reinterpret_cast<const char *>(&arv), (2*count - 1)*sizeof(nohHuf));//Arvore de Huffman
-    
     streamoff numBytesAddress = outputFile.tellp();
     outputFile.write((char*)&numBytes, sizeof(int));//Num de bytes
 
-    charToBinMap cod;
-    cod = generateBin(cod, arv, totalElArv, totalElArv, "");
+    outputFile.write(reinterpret_cast<const char *>(&arv), (2*count - 1)*sizeof(nohHuf));//Arvore de Huffman
 
     streamoff extraBitsAddress = outputFile.tellp();
     outputFile.write(&extrabits, sizeof(char));//Bits extra
@@ -378,8 +375,7 @@ void compress(string inputFileName, string outputFileName)
     outputFile.close();
     
     //Apagando todas as estruturas utilizadas
-    free(heap);
-    free(arv);
+    
 }
 
 void descompress(string inputFileName, string outputFileName)
@@ -400,11 +396,7 @@ void descompress(string inputFileName, string outputFileName)
       return;
     }
 
-    unsigned char byteRead;
-    
-    //inputFile >> byteRead;
-    uint16_t firstByte = (uint16_t)inputFile.get();
-    //uint16_t firstByte = (uint16_t)byteRead;
+    int firstByte = (int)inputFile.get();
     
     if(firstByte == 1)
     {
@@ -427,48 +419,29 @@ void descompress(string inputFileName, string outputFileName)
     // nohHuf arvRead;
     cout << "\nTamanho da arvore: " << firstByte << "\n";
 
-    //inputFile >> byteRead;
+    int secondByte;
+    inputFile.read(reinterpret_cast<char*>(&secondByte), sizeof(int));
+    cout << "Quantidade bytes: " << secondByte;
 
-    int s = (2 * firstByte - 1);
-    struct nohHuf arvRead[s];
-    inputFile.read(reinterpret_cast<char*>(arvRead),  s * sizeof(struct nohHuf));
-
-    int nBytes;
-    inputFile.read(reinterpret_cast<char*>(&nBytes), sizeof(int));
-    cout << "Quantidade bytes: " << nBytes;
-
-    int auxSec = nBytes;
+    int auxSec = secondByte;
 
     // int numBytesOutputFile;
     // inputFile.read(reinterpret_cast<char*>(&numBytesOutputFile), 4);
     // cout << "\nQuantidade de bytes para serem lidos em seguida: " << numBytesOutputFile << "\n";
     // cout<< "TellG: " << inputFile.tellg();
 
-    cout << "\nTell:" << inputFile.tellg() << endl;
-    // string out;
-    // for(int i = 0; i < s; ++i){
-    //     char byte;
-    //     inputFile.read(&byte, sizeof(nohHuf));
-    //     cout <<byte;
-    //     out += byte;
-    // }
-
-
-    //cout << s;
-    cout << "\nTell: " << inputFile.tellg();
+    struct nohHuf *arvRead = new nohHuf[(2*firstByte - 1)*sizeof(nohHuf)];
+    inputFile.read(reinterpret_cast<char*>(&arvRead), (2 * firstByte - 1) * sizeof(nohHuf));
     
-    char extraBits;
-    inputFile.read(reinterpret_cast<char*>(&extraBits), sizeof(char));
+    uint16_t extraBits;
+    inputFile.read(reinterpret_cast<char*>(&extraBits), 1);
 
-    cout << "\nExtraBits: " << (int)extraBits << "\n";
+    cout << "\nExtraBits: " << extraBits << "\n";
     
     cout << "\nImprimindo a arvore para leitura:\n";
 
-    cout << "\nSize arv: " << sizeof(arvRead)/sizeof(nohHuf);
-
-    //cout << "CCC: " << arvRead[0].dir;
-
-    for (int i = 0; i < s; ++i)
+    cout << "\nSize arv: " << sizeof(arvRead);
+    for (int i = 0; i < (2 * firstByte)-1; ++i)
     {
       cout << "\n[" << i << "]";
       cout << "Esq: " << arvRead[i].esq;
@@ -478,20 +451,14 @@ void descompress(string inputFileName, string outputFileName)
     cout << '\n';
     //int startBin = (2 * count);
     int bytesR = 0;
-    char b;
     //int root;
 
     while(bytesR < auxSec)
     {
       //cout << "\nPosicao no arquivo: " << j;
       
-      b = (int)inputFile.get();
+      cout <<"\n" << (int)inputFile.get();
       cout << "ByteR: " << bytesR;
-
-      if((int)b > 127)
-        
-      else
-      b = b << 1;
       bytesR++;
 
       //Logica para verificar se o byte lido é maior que 128
