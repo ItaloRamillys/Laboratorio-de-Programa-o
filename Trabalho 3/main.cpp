@@ -213,7 +213,11 @@ void compress(string inputFileName, string outputFileName)
     while(!inputFile.eof())
     {
       c = inputFile.get();
-      if((int)c == 255) break;
+      if((int)c == 255 && inputFile.peek() == std::ifstream::traits_type::eof()) 
+      {
+        cout << "\nSaiu aqui"; 
+        break;
+      }
       byte = (int) c;
       // cout << '\n' << byte;
       arrBytes[byte] = arrBytes[byte] + 1;
@@ -238,7 +242,7 @@ void compress(string inputFileName, string outputFileName)
             firstByte = i; 
             firstByteFound = true;
           }
-          cout<<"\nCaracter encontrado: " << (char)i;
+          //cout<<"\nCaracter encontrado: " << (char)i;
           count++;
         }
         // cout << '\n' << (char)i << ':' << arrBytes[i];
@@ -297,16 +301,17 @@ void compress(string inputFileName, string outputFileName)
 
     cout << "\nImprimindo a arvore:\n";
 
-    for (int i = 0; i < (2 * count)-1; ++i)
-    {
-      cout << "\n[" << i << "]";
-      cout << "Esq: " << arv[i].esq;
-      cout << " - Dir: " << arv[i].dir;
-    }
-    cout << '\n';
+    // for (int i = 0; i < (2 * count)-1; ++i)
+    // {
+    //   cout << "\n[" << i << "]";
+    //   cout << "Esq: " << arv[i].esq;
+    //   cout << " - Dir: " << arv[i].dir;
+    // }
+    // cout << '\n';
     
     int countBytesCopy = countBytes;
     cout << "\nTamanho arquivo: " << countBytes;
+    cout << "\nTamanho arquivo(char): " << (char*)&countBytes;
 
     int n = 0;
     while (countBytesCopy > 0) {
@@ -314,8 +319,10 @@ void compress(string inputFileName, string outputFileName)
         n++;
     }
 
+    cout << "\nTamanho em nos: " << count;
     cout << "\nBytes necessarios arquivo: " << n;
-    outputFile.write(reinterpret_cast<const char *>(&count), 1);//Quantidade de caracteres
+    
+    outputFile.write((char*)&count, sizeof(char));//Quantidade de caracteres
 
     cout << "\n\n";
 
@@ -328,31 +335,41 @@ void compress(string inputFileName, string outputFileName)
     char extrabits = 0; 
     int numBytes = 0; 
 
-    outputFile.write(reinterpret_cast<const char *>(&arv), (2*count - 1)*sizeof(nohHuf));//Arvore de Huffman
+    outputFile.write((char*)arv, (2*count - 1)*sizeof(nohHuf));//Arvore de Huffman
+    cout << "\nCount: " << count;
+    cout << "\nTam: " << (2*count - 1)*sizeof(nohHuf);
+
+    cout << "\nQuantidade de bytes: " << countBytes;
+    outputFile.write((char*)&countBytes, sizeof(int));
     
-    streamoff numBytesAddress = outputFile.tellp();
-    outputFile.write((char*)&numBytes, sizeof(int));//Num de bytes
+    // streamoff numBytesAddress = outputFile.tellp();
+    // outputFile.write((char*)&numBytes, sizeof(int));//Num de bytes
 
     charToBinMap cod;
     cod = generateBin(cod, arv, totalElArv, totalElArv, "");
 
-    streamoff extraBitsAddress = outputFile.tellp();
-    outputFile.write(&extrabits, sizeof(char));//Bits extra
+    // streamoff extraBitsAddress = outputFile.tellp();
+    // outputFile.write(&extrabits, sizeof(char));//Bits extra
+
+    if(inputFile.fail()) {cout << "FALHA"; return;}
+
     while(!inputFile.eof())
     {
+
       x = inputFile.get();
       // cout << "\nChar: " << x;
       // cout << "\nCodigo: ";
       // cout << cod[(int)x];
+      //cout << "\nCaracter: " << x;
       code = cod[(int)x];
       //cout << "\nLendo: " << code;
-      for(unsigned int i = 0; i < code.length(); i++){
+      for(int i = 0; i < code.length(); i++){
           if(countByte == 8){
-              if(inputFile.eof()) break;
-              outputFile.write(&byteToWrite, sizeof(char));
-              countByte = 0;
-              byteToWrite = 0;
-              numBytes++;
+            if(inputFile.eof()) break;
+            outputFile.write(&byteToWrite, sizeof(char));
+            countByte = 0;
+            byteToWrite = 0;
+            numBytes++;
           }
 
           byteToWrite = byteToWrite << 1; 
@@ -365,21 +382,16 @@ void compress(string inputFileName, string outputFileName)
     if(countByte != 8){ 
         extrabits = (char) 8 - countByte; //Quantos bits faltam para completar 1 byte
         numBytes++; 
-        cout << "\nQuantidade de bits extras utilizados: " << (int) extrabits;
-        cout << "\nQuantidade de Bytes gravados: " << numBytes;
+        // cout << "\nQuantidade de bits extras utilizados: " << (int) extrabits;
+        //cout << "\nQuantidade de Bytes gravados: " << numBytes;
         byteToWrite = byteToWrite << extrabits;
         outputFile.write((char*)&byteToWrite, sizeof(char));
-        outputFile.seekp(extraBitsAddress);
-        outputFile.write(&extrabits, sizeof(char));
-        outputFile.seekp(numBytesAddress);
-        outputFile.write((char*)&numBytes, sizeof(int));
     }
 
     outputFile.close();
     
     //Apagando todas as estruturas utilizadas
     free(heap);
-    free(arv);
 }
 
 void descompress(string inputFileName, string outputFileName)
@@ -392,6 +404,12 @@ void descompress(string inputFileName, string outputFileName)
     ofstream outputFile;
     outputFile.open(outputFileName, ios_base::out |ios::binary);
 
+    if(inputFile.fail() || outputFile.fail())
+    {
+      cout << "Erro na abertura";
+      return;
+    }
+
     if(inputFile.peek() == std::ifstream::traits_type::eof())
     {
       cout<<"\nArquivo vazio"; 
@@ -400,11 +418,18 @@ void descompress(string inputFileName, string outputFileName)
       return;
     }
 
-    unsigned char byteRead;
-    
-    //inputFile >> byteRead;
-    uint16_t firstByte = (uint16_t)inputFile.get();
-    //uint16_t firstByte = (uint16_t)byteRead;
+    char firstByteC;
+    inputFile.read((char*)&firstByteC, sizeof(char));
+    int firstByte = (int) firstByteC;
+
+    cout << "\nFirst byte: " << firstByte;
+    if(firstByte == 0)
+    {
+      //cout << "Primeiro byte ZERO";
+      firstByte = 256;
+    }
+
+    cout << "\nFirst byte: " << firstByte;
     
     if(firstByte == 1)
     {
@@ -424,75 +449,69 @@ void descompress(string inputFileName, string outputFileName)
       return;
     }
 
-    // nohHuf arvRead;
-    cout << "\nTamanho da arvore: " << firstByte << "\n";
-
-    //inputFile >> byteRead;
-
     int s = (2 * firstByte - 1);
+    cout << "\nS:" << s;
+    cout << "\nTam: " << s * sizeof(struct nohHuf);
     struct nohHuf arvRead[s];
     inputFile.read(reinterpret_cast<char*>(arvRead),  s * sizeof(struct nohHuf));
-
-    int nBytes;
-    inputFile.read(reinterpret_cast<char*>(&nBytes), sizeof(int));
-    cout << "Quantidade bytes: " << nBytes;
-
-    int auxSec = nBytes;
-
-    // int numBytesOutputFile;
-    // inputFile.read(reinterpret_cast<char*>(&numBytesOutputFile), 4);
-    // cout << "\nQuantidade de bytes para serem lidos em seguida: " << numBytesOutputFile << "\n";
-    // cout<< "TellG: " << inputFile.tellg();
-
-    cout << "\nTell:" << inputFile.tellg() << endl;
-    // string out;
-    // for(int i = 0; i < s; ++i){
-    //     char byte;
-    //     inputFile.read(&byte, sizeof(nohHuf));
-    //     cout <<byte;
-    //     out += byte;
-    // }
-
-
-    //cout << s;
-    cout << "\nTell: " << inputFile.tellg();
-    
-    char extraBits;
-    inputFile.read(reinterpret_cast<char*>(&extraBits), sizeof(char));
-
-    cout << "\nExtraBits: " << (int)extraBits << "\n";
     
     cout << "\nImprimindo a arvore para leitura:\n";
 
-    cout << "\nSize arv: " << sizeof(arvRead)/sizeof(nohHuf);
-
     //cout << "CCC: " << arvRead[0].dir;
 
-    for (int i = 0; i < s; ++i)
-    {
-      cout << "\n[" << i << "]";
-      cout << "Esq: " << arvRead[i].esq;
-      cout << " - Dir: " << arvRead[i].dir;
-    }
+    // for (int i = 0; i < s; ++i)
+    // {
+    //   cout << "\n[" << i << "]";
+    //   cout << "Esq: " << arvRead[i].esq;
+    //   cout << " - Dir: " << arvRead[i].dir;
+    // }
+
+    int nBytes;
+    inputFile.read((char*)&nBytes, sizeof(int));
+    cout << "\nQuantidade bytes: " << nBytes;
 
     cout << '\n';
-    //int startBin = (2 * count);
-    int bytesR = 0;
-    char b;
-    //int root;
-
-    while(bytesR < auxSec)
+    int bytesW = 0;
+    unsigned char b = (int)inputFile.get();
+    string byteToWrite;
+    int pos = s - 1;//indice da raiz no vetor arvRead
+    uint16_t countBits = 0;
+    while(bytesW < nBytes)
     {
       //cout << "\nPosicao no arquivo: " << j;
-      
-      b = (int)inputFile.get();
-      cout << "ByteR: " << bytesR;
-
-      if((int)b > 127)
-        
+      //cout << "\nByte lido: " << (int)b;
+      if(b >= 128)
+      {
+        //cout << "\nDir";
+        pos = arvRead[pos].dir;
+      }
       else
-      b = b << 1;
-      bytesR++;
+      {
+        //cout << "\nEsq";
+        pos = arvRead[pos].esq;
+      }
+
+      //cout << "\nBit SHIFTADO";
+      b =  b << 1;
+      countBits++;
+      
+      //Verificando se estamos em um nó folha
+      if(pos < firstByte){
+        //cout << "\nEscrevendo: " << (char)arvRead[pos].esq;
+        outputFile.write((char*)&arvRead[pos].esq, sizeof(char));
+        pos = s - 1;
+        bytesW++;
+      }
+
+      if(countBits == 8){
+          //cout << "\n\nMudando de byte\n";
+          b = (unsigned char)inputFile.get();
+          countBits = 0;
+      }
+
+      // if((int)b > 127)
+        
+      // else
 
       //Logica para verificar se o byte lido é maior que 128
       //Descer na arvore até encontrar uma folha (Indice < firstByte)
@@ -501,7 +520,7 @@ void descompress(string inputFileName, string outputFileName)
       //Repetir até o ultimo byte e desconsiderar os bits extras
       //Como a arvore nao está sendo lida corretamente eu nao to conseguindo "DESCER" nela
     }
-
+    cout << "Descompressao realizada";
     inputFile.close();
     outputFile.close();
 }
@@ -539,8 +558,6 @@ int main(int argc,char* argv[]) {
             auto stop = chrono::high_resolution_clock::now();
             auto duration = chrono::duration_cast<chrono::nanoseconds>(stop - start);
             cout << "\nTempo descomprimindo: " << duration.count()/1e9 << " s" << endl;
-       } else if (modo == "-x"){
-            
        } else {
            cout << "\nErro na leitura da entrada" << endl;
        }
