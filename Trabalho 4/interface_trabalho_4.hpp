@@ -10,8 +10,8 @@
 // -----------------------------------------------------------------------------
 // IDENTIFICAÃ‡ÃƒO DO(A) ESTUDANTE:
 //
-// NOME:      ...
-// MATRÃCULA: ...
+// NOME: Italo Ramillys Benicio Silva
+// MATRÃCULA: 399963
 // -----------------------------------------------------------------------------
 
 
@@ -55,7 +55,10 @@ class DicioAVL
    struct Noh
      {
       TC chave;  TV valor;
-
+      Noh *pai, *esq, *dir;
+      
+      Noh *raiz;
+      Noh *primeiro;
       // VocÃª deve completar a estrutura do nÃ³ com:
       //
       // 1. Ponteiros para filho esquerdo, filho direito e pai.
@@ -80,10 +83,13 @@ class DicioAVL
       // em caso contrÃ¡rio, deve ser retornado um ponteiro para o nÃ³ sentinela,
       // definido mais abaixo.
 
-      Noh* obter_dir ();  // Apague o ";" e escreva abaixo a implementaÃ§Ã£o.
-      //  {
-      //  // TODO
-      //  }
+      //Noh* obter_dir ();  // Apague o ";" e escreva abaixo a implementaÃ§Ã£o.
+      Noh* obter_dir ()
+      {
+        if(dir != sent)
+          return dir;
+        return sent;
+      }
 
       // -----------------------------------------------------------------------
 
@@ -92,10 +98,13 @@ class DicioAVL
       // em caso contrÃ¡rio, deve ser retornado um ponteiro para o nÃ³ sentinela,
       // definido mais abaixo.
 
-      Noh* obter_esq ();
-      //  {
-      //  // TODO
-      //  }
+      //Noh* obter_esq ();
+      Noh* obter_esq ()
+      {
+        if(esq != sent)
+          return esq;
+        return sent;
+      }
 
       // -----------------------------------------------------------------------
 
@@ -105,9 +114,12 @@ class DicioAVL
       // definido mais abaixo.
 
       Noh* obter_pai ();
-      //  {
-      //  // TODO
-      //  }
+      Noh* obter_pai ()
+      {
+        if(pai != sent)
+          return pai;
+        return sent;
+      }
 
      }; // struct Noh
 
@@ -141,6 +153,7 @@ class DicioAVL
    class Iterador
      {
       private:
+        Noh *n;
 
       // VocÃª pode incluir campos e mÃ©todos que sejam relevantes para a
       // implementaÃ§Ã£o mas que fiquem inacessÃ­veis ao usuÃ¡rio de "Iterador".
@@ -187,7 +200,8 @@ class DicioAVL
       // forma que seja vÃ¡lido chamar os operadores "==" e "!=" sobre um
       // iterador assim inicializado. PorÃ©m, isso nÃ£o Ã© exigido neste trabalho.
 
-      Iterador ();
+      //Iterador ();
+      Iterador(Noh *noh) : n(noh) {}
       //  {
       //  // TODO
       //  }
@@ -204,10 +218,8 @@ class DicioAVL
       // o iterador atual e "j" NÃƒO SE REFEREM ao mesmo elemento ou posiÃ§Ã£o do
       // dicionÃ¡rio.
 
-      bool operator != (Iterador j);
-      //  {
-      //  // TODO
-      //  }
+      //bool operator != (Iterador j)
+      bool operator != (Iterador j){ return n != j.n; }
 
       // -----------------------------------------------------------------------
 
@@ -215,10 +227,9 @@ class DicioAVL
       // o iterador atual e "j" SE REFEREM ao mesmo elemento ou posiÃ§Ã£o do
       // dicionÃ¡rio.
 
-      bool operator == (Iterador j);
-      //  {
-      //  // TODO
-      //  }
+      //bool operator == (Iterador j);
+      bool operator == (Iterador j){ return n == j.n; }
+      
 
       // -----------------------------------------------------------------------
 
@@ -236,19 +247,17 @@ class DicioAVL
 
       // Este mÃ©todo deve retornar a "chave" do elemento apontado pelo iterador.
 
-      TC chave ();
-      //  {
-      //  // TODO
-      //  }
+      //TC chave ();
+      TV operator*() { return n->chave; }
+      
 
       // -----------------------------------------------------------------------
 
       // Este mÃ©todo deve retornar o "valor" do elemento apontado pelo iterador.
 
-      TV valor ();
-      //  {
-      //  // TODO
-      //  }
+      //TV valor ();
+      TV operator*() { return n->valor; }
+      
 
       // -----------------------------------------------------------------------
 
@@ -260,11 +269,32 @@ class DicioAVL
       // maior chave), o iterador deve passar a apontar para o "fim" do
       // dicionÃ¡rio.
 
-      Iterador& operator ++ ();
-      //  {
-      //  // TODO
-      //  }
-
+      //Iterador& operator ++ ();
+      void operator++() {
+            TC chave = n->chave;
+            while (true){
+                if (n->dir != nullptr && n->dir->chave > chave){
+                    n = n->dir;
+                    while (n->esq != nullptr)
+                        n = n->esq;
+                    break;
+                    
+                }else{
+                    if (n->pai != nullptr){
+                        if(n->pai->esq == n){
+                            n = n->pai;
+                            break;
+                        }else{
+                            n = n->pai;
+                        }
+                    }else{
+                        n = nullptr;
+                        break;
+                    }
+                }
+            }
+        }
+      
      }; // class Iterador
 
    // --------------------------------------------------------------------------
@@ -275,7 +305,8 @@ class DicioAVL
 
    // Construtor: deve inicializar o dicionÃ¡rio como vazio.
 
-   DicioAVL ();
+   //DicioAVL ();
+   DicioAVL (): raiz(sent), sent(nullptr) {}
    //  {
    //  // TODO
    //  }
@@ -285,7 +316,11 @@ class DicioAVL
    // Destrutor: deve desalocar toda a memÃ³ria dinamicamente alocada pelo
    // dicionÃ¡rio (no caso, basicamente a Ã¡rvore AVL).
 
-   ~DicioAVL ();
+   //~DicioAVL ();
+   ~DicioAVL ()
+   {
+    
+   }
    //  {
    //  // TODO
    //  }
@@ -308,7 +343,8 @@ class DicioAVL
    // e que dessa forma sirva para caracterizar a situaÃ§Ã£o em que o iterador
    // tenha atingido o "fim" do dicionÃ¡rio.
 
-   Iterador end ();
+   //Iterador end ();
+   Iterador end(){ return &sent; }
    //  {
    //  // TODO
    //  }
@@ -336,10 +372,44 @@ class DicioAVL
    // necessÃ¡rio que o nÃ³ do sucessor realmente ocupe o lugar da Ã¡rvore que
    // estava sendo ocupado pelo nÃ³ a ser removido.
 
-   Iterador inserir (TC c, TV v);
-   //  {
-   //  // TODO
-   //  }
+    Iterador inserir (TC c, TV v);
+    {
+      Noh *n = new Noh;
+      n->chave = c;
+      n->valor = v;
+
+      if(raiz == nullptr){
+      raiz = n;
+          primeiro = raiz;
+      }
+      else{
+        Noh *nohAtual = raiz;
+        while(true){
+          if(n->chave < nohAtual->chave){
+            if(nohAtual->esq == nullptr){
+              nohAtual->esq = n;
+              if(n->chave < primeiro->chave)
+                  primeiro = nohAtual->esq;
+              n->pai = nohAtual;
+              break;
+            }
+            else
+              nohAtual = nohAtual->esq;
+          }
+          else{
+            if(nohAtual->dir == nullptr){
+              nohAtual->dir = n;
+              n->pai = nohAtual;
+              break;
+            }
+            else
+              nohAtual = nohAtual->dir;
+          }
+        }
+      }
+      Iterador i(n);
+      return i;
+    }
 
    // --------------------------------------------------------------------------
 
@@ -347,10 +417,21 @@ class DicioAVL
    // caso essa chave esteja presente no dicionÃ¡rio.
    // Se a chave nÃ£o estiver presente, deve retornar um iterador para o "fim".
 
-   Iterador buscar (TC c);
-   //  {
-   //  // TODO
-   //  }
+    Iterador buscar (TC c);
+    {
+        while(raiz != nullptr){
+            if (raiz->chave == c){
+                Iterador i(raiz);
+                return i;
+            }
+            if (c < raiz->chave)
+                raiz = raiz->esq;
+            else
+                raiz = raiz->dir;
+        }
+        Iterador i(nullptr);
+        return i;
+    }
 
    // --------------------------------------------------------------------------
 
@@ -363,10 +444,12 @@ class DicioAVL
    // Se o iterador apontar para o "fim" do dicionÃ¡rio,
    // a funÃ§Ã£o deve simplesmente deixar o dicionÃ¡rio inalterado.
 
-   void remover (Iterador i);
-   //  {
-   //  // TODO
-   //  }
+    void remover (Iterador i);
+    {
+        Noh *aux = i;
+
+        cout << *i << '\n';
+    }
 
   }; // class DicioAVL
 
