@@ -156,14 +156,18 @@ Noh* inserir(DicAVL& D, TC c, TV v) {
 
 void preOrder(Noh *root)
 {
-	cout << "\nEntrou";
-    if(root != NULL)
+    if(root != nullptr)
     {
-        cout << root->chave << " ";
+
+        cout <<'\n'<< root->chave;
+		if( root->esq != nullptr )
+			cout << " | Esq: " << root->esq->chave;
+		if( root->dir != nullptr )
+			cout << " | Dir: " << root->dir->chave;
         preOrder(root->esq);
         preOrder(root->dir);
     }else{
-		cout << "Nulo";
+		cout << "\nNulo";
 	}
 }
 
@@ -346,7 +350,7 @@ int main() {
 	}
 	cout << "\nAltura raiz: " << D.raiz->h << '\n';
 	inserir(D, 8, 10);
-	cout <<"XYZ";
+
 	if(D.raiz->esq != nullptr)
 	{
 		cout << "Raiz: " << D.raiz->chave << '\n';
@@ -358,7 +362,5 @@ int main() {
 		cout << "Filho direito: " << D.raiz->dir->chave << '\n';
 	}
 
-
-	cout <<"ABC";
 	preOrder(D.raiz);
 }
