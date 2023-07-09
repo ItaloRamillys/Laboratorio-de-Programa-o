@@ -113,7 +113,7 @@ class DicioAVL
       // em caso contrÃ¡rio, deve ser retornado um ponteiro para o nÃ³ sentinela,
       // definido mais abaixo.
 
-      Noh* obter_pai ();
+      //Noh* obter_pai ();
       Noh* obter_pai ()
       {
         if(pai != sent)
@@ -229,7 +229,6 @@ class DicioAVL
 
       //bool operator == (Iterador j);
       bool operator == (Iterador j){ return n == j.n; }
-      
 
       // -----------------------------------------------------------------------
 
@@ -249,7 +248,6 @@ class DicioAVL
 
       //TC chave ();
       TV operator*() { return n->chave; }
-      
 
       // -----------------------------------------------------------------------
 
@@ -257,7 +255,6 @@ class DicioAVL
 
       //TV valor ();
       TV operator*() { return n->valor; }
-      
 
       // -----------------------------------------------------------------------
 
@@ -307,9 +304,6 @@ class DicioAVL
 
    //DicioAVL ();
    DicioAVL (): raiz(sent), sent(nullptr) {}
-   //  {
-   //  // TODO
-   //  }
 
    // --------------------------------------------------------------------------
 
@@ -331,10 +325,7 @@ class DicioAVL
    // chave, caso exista um.
    // Se o dicionÃ¡rio estiver vazio, deve retornar um iterador para o "fim".
 
-   Iterador begin ();
-   //  {
-   //  // TODO
-   //  }
+   Iterador begin (){ return &raiz; }
 
    // --------------------------------------------------------------------------
 
@@ -345,9 +336,6 @@ class DicioAVL
 
    //Iterador end ();
    Iterador end(){ return &sent; }
-   //  {
-   //  // TODO
-   //  }
 
    // --------------------------------------------------------------------------
 
