@@ -45,12 +45,12 @@ int getFB(Noh* n) // Fator de balanceamento
 }
 Noh* rotacaoDireita(Noh* y)
 {
+	cout << "Rotacao em: " << y->chave;
 	Noh* x = y->esq;
-	Noh* xr = x->dir;
+	Noh* dx = x->dir;
 
-	//Update Pointers after rotation
 	x->dir = y;
-	y->esq = xr;
+	y->esq = dx;
 
 	y->h = max(getAltura(y->esq), getAltura(y->dir)) + 1;
 	x->h = max(getAltura(x->esq), getAltura(x->dir)) + 1;
@@ -60,10 +60,10 @@ Noh* rotacaoDireita(Noh* y)
 Noh* rotacaoEsquerda(Noh* y)
 {
 	Noh* x = y->dir;
-	Noh* t2 = x->esq;
+	Noh* ex = x->esq;
 
 	x->esq = y;
-	y->dir = t2;
+	y->dir = ex;
 
 	y->h = max(getAltura(y->esq), getAltura(y->dir)) + 1;
 	x->h = max(getAltura(x->esq), getAltura(x->dir)) + 1;
@@ -79,6 +79,7 @@ void inicializar(DicAVL& D) {
 }
 
 Noh* inserir(Noh* n, TC c, TV v) {
+	cout << "\nInserindo\nChave:"<<c<<"\nValor:"<<v<<"\n";
 	if (n == nullptr) {
 		Noh *n = new Noh;
 		n->esq = n->dir = nullptr;
@@ -86,35 +87,47 @@ Noh* inserir(Noh* n, TC c, TV v) {
 		n->valor = v;
 		n->h = 1;
 		return n;
+		cout << "\nInserindo na folha";
 	}
 
-	if (c < n->chave) {
-		// n->esq->pai = n;
+	cout << '\n';
+	if (c < n->chave) 
+	{
+		cout << c << " < " << n->chave << " - e";
 		n->esq = inserir(n->esq, c, v);
 	}
-	else if (c > n->chave) {
-		// n->dir->pai = n;
+	else if (c > n->chave) 
+	{
+		cout << c << " < " << n->chave << " - d";
 		n->dir = inserir(n->dir, c, v);
 	}
-	else
+	else{
 		return nullptr;
-	// cout << "Chave duplicada \n";
-
+		cout << "\nChave duplicada \n";
+	}
+	cout << "Raiz observada: " << n->chave;
 	n->h = 1 + max(getAltura(n->esq), getAltura(n->dir));
 
-	int fatorBalanceamento = getFB(n);
+	int dif = getFB(n);
 
-	if (fatorBalanceamento > 1 && c < n->esq->chave)
-		return rotacaoDireita(n);
-	if (fatorBalanceamento < -1 && c > n->dir->chave)
+	cout << "\nDif: " << dif << ' ';
+
+	if (dif < -1 && c > n->dir->chave)
 		return rotacaoEsquerda(n);
-	if (fatorBalanceamento > 1 && c > n->esq->chave) {
-		n->esq = rotacaoEsquerda(n);
-		return rotacaoDireita(n);
-	}
-	if (fatorBalanceamento < -1 && c < n->dir->chave) {
+	if (dif < -1 && c < n->dir->chave) {
 		n->dir = rotacaoDireita(n->dir);
 		return rotacaoEsquerda(n);
+	}
+	
+	if (dif > 1 && c < n->esq->chave)
+	{
+		cout <<"\nRotacao Dir";
+		return rotacaoDireita(n);
+	}
+	if (dif > 1 && c > n->esq->chave) {
+		cout <<"\nRotacao Esq";
+		n->esq = rotacaoEsquerda(n);
+		return rotacaoDireita(n);
 	}
 
 	return n;
@@ -124,7 +137,7 @@ Noh* inserir(DicAVL& D, TC c, TV v) {
 	if (D.raiz == nullptr)
 		return D.raiz = inserir(D.raiz, c, v);
 	else
-		return inserir(D.raiz, c, v);
+		return D.raiz = inserir(D.raiz, c, v);
 }
 
 
@@ -138,7 +151,7 @@ Noh* procurar(Noh* n, TC c) {
 }
 
 Noh* procurar(DicAVL& D, TC c) {
-		return procurar(D.raiz, c);
+	return procurar(D.raiz, c);
 }
 
 // void remover (DicAVL &D, Noh *n){
@@ -150,15 +163,66 @@ Noh* procurar(DicAVL& D, TC c) {
 // }
 
 int main() {
+	
 	DicAVL D;
 	inicializar(D);
 
-	inserir(D, 10, 10);
-	inserir(D, 5, 20);
-	inserir(D, 3, 40);
-	inserir(D, 0, 30);
-	inserir(D, 4, 10);
-
-	cout << "Raiz: " << D.raiz->chave << '\n';
-	cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
+	inserir(D, 10, 1);
+	if(D.raiz->esq != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
+	}
+	if(D.raiz->dir != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho direito: " << D.raiz->dir->chave << '\n';
+	}
+		cout << "Altura raiz: " << D.raiz->h << '\n';
+	inserir(D, 5, 2);
+	if(D.raiz->esq != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
+	}
+	if(D.raiz->dir != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho direito: " << D.raiz->dir->chave << '\n';
+	}
+		cout << "Altura raiz: " << D.raiz->h << '\n';
+	inserir(D, 3, 3);
+	cout << "Chave: " << D.raiz->chave;
+	if(D.raiz->esq != nullptr){
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
+	}
+	if(D.raiz->dir != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho direito: " << D.raiz->dir->chave << '\n';
+	}
+		cout << "Altura raiz: " << D.raiz->h << '\n';
+	inserir(D, 7, 10);
+	if(D.raiz->esq != nullptr){
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
+	}
+	if(D.raiz->dir != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho direito: " << D.raiz->dir->chave << '\n';
+	}
+		cout << "Altura raiz: " << D.raiz->h << '\n';
+	inserir(D, 8, 10);
+	if(D.raiz->esq != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
+	}
+	if(D.raiz->dir != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho direito: " << D.raiz->dir->chave << '\n';
+	}
 }

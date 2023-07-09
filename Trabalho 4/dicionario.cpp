@@ -82,6 +82,7 @@ public:
 			while(true){
                 if(n->chave < nohAtual->chave){
                     if(nohAtual->esq == nullptr){
+               
                         nohAtual->esq = n;
                         if(n->chave < primeiro->chave)
                             primeiro = nohAtual->esq;
@@ -159,12 +160,11 @@ int main()
         elemAdicionado = D.inserir(3, '3');
         elemAdicionado = D.inserir(1, '1');
 
-        // auto elemEncontrado = D.procurar(5);
+        auto elemEncontrado = D.procurar(5);
 
-        // D.remover(elemAdicionado);
+        D.remover(elemAdicionado);
 
-
-        // Dicio<char, double>::Iterador fim = D.fim(); // ou "auto fim ..."
+        Dicio<char, double>::Iterador fim = D.fim(); // ou "auto fim ..."
 
         auto inicio = D.inicio();
         auto fim = D.fim();
@@ -179,5 +179,3 @@ int main()
         return 1;
     }
 }
-
-// g++ -Wall -Wextra -std=c++17 -pedantic -o dic dicionario.cpp
