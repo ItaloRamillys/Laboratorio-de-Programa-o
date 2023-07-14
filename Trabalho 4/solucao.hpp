@@ -201,10 +201,8 @@ class DicioAVL
       // iterador assim inicializado. PorÃ©m, isso nÃ£o Ã© exigido neste trabalho.
 
       //Iterador ();
+      Iterador() : n(NULL) {}
       Iterador(Noh *noh) : n(noh) {}
-      //  {
-      //  // TODO
-      //  }
 
       // -----------------------------------------------------------------------
 
@@ -247,14 +245,14 @@ class DicioAVL
       // Este mÃ©todo deve retornar a "chave" do elemento apontado pelo iterador.
 
       //TC chave ();
-      TC chave () { return n->chave; }
+      TC chave() { return n->chave; }
 
       // -----------------------------------------------------------------------
 
       // Este mÃ©todo deve retornar o "valor" do elemento apontado pelo iterador.
 
       //TV valor ();
-      TV valor () { return n->valor; }
+      TV valor() { return n->valor; }
 
       // -----------------------------------------------------------------------
 
@@ -275,6 +273,7 @@ class DicioAVL
                     while (n->esq != nullptr)
                         n = n->esq;
                     break;
+                    
                 }else{
                     if (n->pai != nullptr){
                         if(n->pai->esq == n){
@@ -301,8 +300,13 @@ class DicioAVL
 
    // Construtor: deve inicializar o dicionÃ¡rio como vazio.
 
-   //DicioAVL ();
-   DicioAVL (): raiz(sent), sent(nullptr) {}
+   //DicioAVL ()
+   DicioAVL ()
+   {
+    raiz = nullptr;
+    sent.dir = sent.esq = &sent;
+   }
+   DicioAVL (Noh sent, Noh *raiz): raiz(raiz), sent(sent) {}
 
    // --------------------------------------------------------------------------
 
@@ -334,7 +338,7 @@ class DicioAVL
    // tenha atingido o "fim" do dicionÃ¡rio.
 
    //Iterador end ();
-   Iterador end(){ return sent; }
+   Iterador end(){ return &sent; }
 
    // --------------------------------------------------------------------------
 
@@ -359,7 +363,6 @@ class DicioAVL
    // necessÃ¡rio que o nÃ³ do sucessor realmente ocupe o lugar da Ã¡rvore que
    // estava sendo ocupado pelo nÃ³ a ser removido.
 
-    //Iterador inserir (TC c, TV v);
     Iterador inserir (TC c, TV v)
     {
       Noh *n = new Noh;
@@ -367,8 +370,9 @@ class DicioAVL
       n->valor = v;
 
       if(raiz == nullptr){
+        cout << "\nInserindo quando nao tem raiz";
         raiz = n;
-        //primeiro = raiz;
+        //  primeiro = raiz;
       }
       else{
         Noh *nohAtual = raiz;
@@ -405,7 +409,6 @@ class DicioAVL
    // caso essa chave esteja presente no dicionÃ¡rio.
    // Se a chave nÃ£o estiver presente, deve retornar um iterador para o "fim".
 
-    //Iterador buscar (TC c);
     Iterador buscar (TC c)
     {
         while(raiz != nullptr){
@@ -433,13 +436,11 @@ class DicioAVL
    // Se o iterador apontar para o "fim" do dicionÃ¡rio,
    // a funÃ§Ã£o deve simplesmente deixar o dicionÃ¡rio inalterado.
 
-    // void remover (Iterador i);
     void remover (Iterador i)
     {
-        //Noh *aux = i;
+        // Noh *aux = i;
 
-        cout << *i->chave << '\n';
-        cout << *i->valor << '\n';
+        //cout << i->valor << '\n';
     }
 
   }; // class DicioAVL
