@@ -2,6 +2,7 @@
 #include <iostream>
 using namespace std;
 
+
 #include "solucao.hpp"
 int main()
 {
@@ -12,16 +13,20 @@ int main()
         int i;
         for (i = 48; i < 58; ++i)
         {
-            cout<<"\nInserindo: " << i << ":" << (char)i;
+            cout<<"\n---------------------------------------\n";
             it = D.inserir(i, (char)i);
             if (it == D.end())
                 return 2;
             its[i - 48] = it;
         }
+
+        cout<< "\nBegin: " << D.begin().valor();
+        cout<< "\nEnd: " << D.end().valor();
+
         for (it = D.begin(); it != D.end(); ++it)
         {
-            cout << "O c´odigo de ’" << it.valor()
-                 << "’ ´e " << it.chave() << '\n';
+            cout << "\nO codigo de '" << it.valor()
+                 << "' e " << it.chave() << '\n';
         }
         for (i = 48; i < 58; ++i)
         {
@@ -34,7 +39,7 @@ int main()
     }
     catch (const exception &e)
     {
-        cerr << "Exce¸c~ao: " << e.what() << '\n';
+        cerr << "Excecao: " << e.what() << '\n';
         return 1;
     }
 } // main
