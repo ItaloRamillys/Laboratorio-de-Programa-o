@@ -37,9 +37,12 @@ int main()
         }
         
         //cout<< "\nIterador: " << it.valor();
+        cout << "\n\nBuscando:";
         for (i = 48; i < 58; ++i)
         {
+            cout <<"\nChave: " << i;
             it = D.buscar(i);
+            cout <<"\nValor: " << it.valor();
             if (it != its[i - 48])
                 return 2;
             D.remover(it);

@@ -679,19 +679,46 @@ public:
 
   Iterador buscar(TC c)
   {
-    while (raiz != nullptr)
+    // while (raiz != nullptr)
+    // {
+    //   if (raiz->chave == c)
+    //   {
+    //     cout << "Achei";
+    //     Iterador i(raiz);
+    //     return i;
+    //   }
+    //   if (c < raiz->chave)
+    //   {
+    //     cout << "\nEsq";
+    //     raiz = raiz->esq;
+    //   }
+    //   else
+    //   {
+    //     cout << "\nDir";
+    //     raiz = raiz->dir;
+    //   }
+    // }
+    
+    // Iterador i(nullptr);
+    // return i;
+    // If root is NULL
+    Noh *raizAux = raiz;
+
+    // Recur to the left subtree if
+    // the current node's value is
+    // greater than key
+    while(true)
     {
-      if (raiz->chave == c)
-      {
-        Iterador i(raiz);
-        return i;
+      cout << "\nRaiz busca: " << raizAux->chave;
+      if(raizAux->chave == c)
+        break;
+      if (raizAux->chave > c) {
+        raizAux = raizAux->esq;
+      }else{
+        raizAux = raizAux->dir;
       }
-      if (c < raiz->chave)
-        raiz = raiz->esq;
-      else
-        raiz = raiz->dir;
     }
-    Iterador i(nullptr);
+    Iterador i(raizAux);
     return i;
   }
 
