@@ -701,7 +701,7 @@ public:
     
     // Iterador i(nullptr);
     // return i;
-    // If root is NULL
+    // If raiz is NULL
     Noh *raizAux = raiz;
 
     // Recur to the left subtree if
@@ -735,9 +735,105 @@ public:
 
   void remover(Iterador i)
   {
-    // Noh *aux = i;
-
-    // cout << i->valor << '\n';
+    
+     
+    // STEP 1: PERFORM STANDARD BST DELETE
+    if (raiz == NULL)
+        return raiz;
+ 
+    // If the chave to be deleted is smaller
+    // than the raiz's chave, then it lies
+    // in esq subtree
+    if ( n->chave < raiz->chave )
+        raiz->esq = deleteNoh(raiz->esq, chave);
+ 
+    // If the chave to be deleted is greater
+    // than the raiz's chave, then it lies
+    // in dir subtree
+    else if( n-> > raiz->chave )
+        raiz->dir = deleteNoh(raiz->dir, chave);
+ 
+    // if chave is same as raiz's chave, then
+    // This is the Noh to be deleted
+    else
+    {
+        // Noh with only one child or no child
+        if( (raiz->esq == NULL) ||
+            (raiz->dir == NULL) )
+        {
+            Noh *temp = raiz->esq ?
+                         raiz->esq :
+                         raiz->dir;
+ 
+            // No child case
+            if (temp == NULL)
+            {
+                temp = raiz;
+                raiz = NULL;
+            }
+            else // One child case
+            *raiz = *temp; // Copy the contents of
+                           // the non-empty child
+            free(temp);
+        }
+        else
+        {
+            // Noh with two children: Get the inorder
+            // successor (smallest in the dir subtree)
+            Noh* temp = minValueNoh(raiz->dir);
+ 
+            // Copy the inorder successor's
+            // data to this Noh
+            raiz->chave = temp->chave;
+ 
+            // Delete the inorder successor
+            raiz->dir = deleteNoh(raiz->dir,
+                                     temp->chave);
+        }
+    }
+ 
+    if (raiz == NULL)
+      return raiz;
+ 
+    // STEP 2: UPDATE h OF THE CURRENT Noh
+    raiz->h = 1 + max(getAltura(raiz->esq),
+                           getAltura(raiz->dir));
+ 
+    // STEP 3: GET THE BALANCE FACTOR OF
+    // THIS Noh (to check whether this
+    // Noh became unbalanced)
+    int balance = getFB(raiz);
+ 
+    // If this Noh becomes unbalanced,
+    // then there are 4 cases
+ 
+    // esq esq Case
+    if (balance > 1 &&
+        getFB(raiz->esq) >= 0)
+        return rotacaoDireita(raiz);
+ 
+    // esq dir Case
+    if (balance > 1 &&
+        getFB(raiz->esq) < 0)
+    {
+        raiz->esq = rotacaoEsquerda(raiz->esq);
+        return rotacaoDireita(raiz);
+    }
+ 
+    // dir dir Case
+    if (balance < -1 &&
+        getFB(raiz->dir) <= 0)
+        return rotacaoEsquerda(raiz);
+ 
+    // dir esq Case
+    if (balance < -1 &&
+        getFB(raiz->dir) > 0)
+    {
+        raiz->dir = rotacaoDireita(raiz->dir);
+        return rotacaoEsquerda(raiz);
+    }
+ 
+    return raiz;
   }
 
 }; // class DicioAVL
