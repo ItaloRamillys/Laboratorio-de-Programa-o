@@ -212,7 +212,12 @@ public:
     // dicionÃ¡rio.
 
     // bool operator != (Iterador j)
-    bool operator!=(Iterador j) { if(n == nullptr) return false; return n != j.n; }
+    bool operator!=(Iterador j)
+    {
+      if (n == nullptr)
+        return false;
+      return n != j.n;
+    }
 
     // -----------------------------------------------------------------------
 
@@ -262,15 +267,15 @@ public:
     // Iterador& operator ++ ();
     Iterador &operator++()
     {
-      //cout << "\nRaiz ob: " << n->chave;
-      // if (n->dir != nullptr)
-      // {
-      //   n = n->dir;
-      //   while (n->esq != nullptr) {
-      //     n = n->esq;
-      //   }
-      //   return *this;
-      // }
+      // cout << "\nRaiz ob: " << n->chave;
+      //  if (n->dir != nullptr)
+      //  {
+      //    n = n->dir;
+      //    while (n->esq != nullptr) {
+      //      n = n->esq;
+      //    }
+      //    return *this;
+      //  }
 
       // cout << "\nComparando: " << n->pai->chave << " - " << n->chave;
       // Noh *paiN = n->pai;
@@ -698,7 +703,7 @@ public:
     //     raiz = raiz->dir;
     //   }
     // }
-    
+
     // Iterador i(nullptr);
     // return i;
     // If raiz is NULL
@@ -707,14 +712,17 @@ public:
     // Recur to the left subtree if
     // the current node's value is
     // greater than key
-    while(true)
+    while (true)
     {
-      //cout << "\nRaiz busca: " << raizAux->chave;
-      if(raizAux->chave == c)
+      // cout << "\nRaiz busca: " << raizAux->chave;
+      if (raizAux->chave == c)
         break;
-      if (raizAux->chave > c) {
+      if (raizAux->chave > c)
+      {
         raizAux = raizAux->esq;
-      }else{
+      }
+      else
+      {
         raizAux = raizAux->dir;
       }
     }
@@ -733,164 +741,117 @@ public:
   // Se o iterador apontar para o "fim" do dicionÃ¡rio,
   // a funÃ§Ã£o deve simplesmente deixar o dicionÃ¡rio inalterado.
 
+  Noh *getMinNoh(Noh *no)
+  {
+    Noh *aux = no;
+
+    while (aux->esq != NULL)
+      aux = aux->esq;
+
+    return aux;
+  }
+
   void remover(Iterador i)
   {
 
     cout << "\nBuscando para apagar: " << i.chave();
     // STEP 1: PERFORM STANDARD BST DELETE
-    // if (raiz == NULL)
-    //     return raiz;
- 
-    // // If the chave to be deleted is smaller
-    // // than the raiz's chave, then it lies
-    // // in esq subtree
-    // if ( n->chave < raiz->chave )
-    //     raiz->esq = deleteNoh(raiz->esq, chave);
- 
-    // // If the chave to be deleted is greater
-    // // than the raiz's chave, then it lies
-    // // in dir subtree
-    // else if( n-> > raiz->chave )
-    //     raiz->dir = deleteNoh(raiz->dir, chave);
- 
-    // // if chave is same as raiz's chave, then
-    // // This is the Noh to be deleted
-    // else
-    // {
-    //     // Noh with only one child or no child
-    //     if( (raiz->esq == NULL) ||
-    //         (raiz->dir == NULL) )
-    //     {
-    //         Noh *temp = raiz->esq ?
-    //                      raiz->esq :
-    //                      raiz->dir;
- 
-    //         // No child case
-    //         if (temp == NULL)
-    //         {
-    //             temp = raiz;
-    //             raiz = NULL;
-    //         }
-    //         else // One child case
-    //         *raiz = *temp; // Copy the contents of
-    //                        // the non-empty child
-    //         free(temp);
-    //     }
-    //     else
-    //     {
-    //         // Noh with two children: Get the inorder
-    //         // successor (smallest in the dir subtree)
-    //         Noh* temp = minValueNoh(raiz->dir);
- 
-    //         // Copy the inorder successor's
-    //         // data to this Noh
-    //         raiz->chave = temp->chave;
- 
-    //         // Delete the inorder successor
-    //         raiz->dir = deleteNoh(raiz->dir,
-    //                                  temp->chave);
-    //     }
-    // }
- 
-    // Noh *nohRet = n;
-    // while (n != nullptr && n != &sent)
-    // {
-    //   cout << "\nChamada noh:\n";
-    //   printNoh(n);
-    //   // if(n == nullptr) break;
-    //   // n->altura = n->altura + 1;
+    if (raiz == NULL)
+      return raiz;
 
-    //   cout << "\nAlturas: " << getAltura(n->esq) << " - " << getAltura(n->dir);
-    //   n->altura = 1 + max(getAltura(n->esq), getAltura(n->dir));
-    //   // cout << "\nMax: " << max(getAltura(raiz->esq), getAltura(raiz->dir));
+    // If the chave to be deleted is smaller
+    // than the raiz's chave, then it lies
+    // in esq subtree
+    if (chave < raiz->chave)
+      raiz->esq = deleteNoh(raiz->esq, chave);
 
-    //   // cout << "\nALtura atual: " << raiz->altura;
-    //   int dif = getBalanceamento(n);
-    //   cout << "\nDif: " << dif << ' ';
+    // If the chave to be deleted is greater
+    // than the raiz's chave, then it lies
+    // in dir subtree
+    else if (chave > raiz->chave)
+      raiz->dir = deleteNoh(raiz->dir, chave);
 
-    //   if (dif < -1 && n->dir != nullptr && c > n->dir->chave)
-    //   {
-    //     cout << "\nRotacao Esq NEGATIVO";
-    //     // Verificar aqui se o noh é a raiz geral da arvore
-    //     if (n == raiz)
-    //       raiz = rotacaoEsquerda(n);
-    //     else
-    //       rotacaoEsquerda(n);
-    //   }
+    // if chave is same as raiz's chave, then
+    // This is the Noh to be deleted
+    else
+    {
+      // Noh with only one child or no child
+      if ((raiz->esq == NULL) ||
+          (raiz->dir == NULL))
+      {
+        Noh *aux = raiz->esq ? raiz->esq : raiz->dir;
 
-    //   if (dif < -1 && n->dir != nullptr && c < n->dir->chave)
-    //   {
-    //     cout << "\nRotacao Dir NEGATIVO";
-    //     raiz->dir = rotacaoDireita(n->dir);
-    //     if (n == raiz)
-    //       raiz = rotacaoEsquerda(n);
-    //     else
-    //       rotacaoEsquerda(n);
-    //   }
+        // No child case
+        if (aux == NULL)
+        {
+          aux = raiz;
+          raiz = NULL;
+        }
+        else            // One child case
+          *raiz = *aux; // Copy the contents of
+                        // the non-empty child
+        free(aux);
+      }
+      else
+      {
+        // Noh with two children: Get the inorder
+        // successor (smallest in the dir subtree)
+        Noh *aux = getMinNoh(raiz->dir);
 
-    //   if (dif > 1 && n->esq != nullptr && c < n->esq->chave)
-    //   {
-    //     cout << "\nRotacao Dir POSITIVO";
-    //     if (n == raiz)
-    //       raiz = rotacaoDireita(n);
-    //     else
-    //       rotacaoDireita(n);
-    //   }
-    //   if (dif > 1 && n->esq != nullptr && c > n->esq->chave)
-    //   {
-    //     cout << "\nRotacao Esq POSITIVO";
-    //     raiz->esq = rotacaoEsquerda(n->esq);
-    //     if (n == raiz)
-    //       raiz = rotacaoDireita(n);
-    //     else
-    //       rotacaoDireita(n);
-    //   }
+        // Copy the inorder successor's
+        // data to this Noh
+        raiz->chave = aux->chave;
 
-    //   n = n->pai;
-    // }
+        // Delete the inorder successor
+        raiz->dir = deleteNoh(raiz->dir,
+                              aux->chave);
+      }
+    }
 
-    // if (raiz == NULL)
-    //   return raiz;
- 
-    // // STEP 2: UPDATE h OF THE CURRENT Noh
-    // raiz->h = 1 + max(getAltura(raiz->esq),
-    //                        getAltura(raiz->dir));
- 
-    // // STEP 3: GET THE BALANCE FACTOR OF
-    // // THIS Noh (to check whether this
-    // // Noh became unbalanced)
-    // int balance = getBalanceamento(raiz);
- 
-    // // If this Noh becomes unbalanced,
-    // // then there are 4 cases
- 
-    // // esq esq Case
-    // if (balance > 1 &&
-    //     getBalanceamento(raiz->esq) >= 0)
-    //     return rotacaoDireita(raiz);
- 
-    // // esq dir Case
-    // if (balance > 1 &&
-    //     getBalanceamento(raiz->esq) < 0)
-    // {
-    //     raiz->esq = rotacaoEsquerda(raiz->esq);
-    //     return rotacaoDireita(raiz);
-    // }
- 
-    // // dir dir Case
-    // if (balance < -1 &&
-    //     getBalanceamento(raiz->dir) <= 0)
-    //     return rotacaoEsquerda(raiz);
- 
-    // // dir esq Case
-    // if (balance < -1 &&
-    //     getBalanceamento(raiz->dir) > 0)
-    // {
-    //     raiz->dir = rotacaoDireita(raiz->dir);
-    //     return rotacaoEsquerda(raiz);
-    // }
- 
-    //return raiz;
+    // If the tree had only one Noh
+    // then return
+    if (raiz == NULL)
+      return raiz;
+
+    // STEP 2: UPDATE h OF THE aux Noh
+    raiz->h = 1 + max(getAltura(raiz->esq),
+                      getAltura(raiz->dir));
+
+    // STEP 3: GET THE BALANCE FACTOR OF
+    // THIS Noh (to check whether this
+    // Noh became unbalanced)
+    int balance = getFB(raiz);
+
+    // If this Noh becomes unbalanced,
+    // then there are 4 cases
+
+    // esq esq Case
+    if (balance > 1 &&
+        getFB(raiz->esq) >= 0)
+      return rotacaoDireita(raiz);
+
+    // esq dir Case
+    if (balance > 1 &&
+        getFB(raiz->esq) < 0)
+    {
+      raiz->esq = rotacaoEsquerda(raiz->esq);
+      return rotacaoDireita(raiz);
+    }
+
+    // dir dir Case
+    if (balance < -1 &&
+        getFB(raiz->dir) <= 0)
+      return rotacaoEsquerda(raiz);
+
+    // dir esq Case
+    if (balance < -1 &&
+        getFB(raiz->dir) > 0)
+    {
+      raiz->dir = rotacaoDireita(raiz->dir);
+      return rotacaoEsquerda(raiz);
+    }
+
+    return raiz;
   }
 
 }; // class DicioAVL

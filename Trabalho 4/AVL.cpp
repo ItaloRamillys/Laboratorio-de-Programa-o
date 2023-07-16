@@ -159,139 +159,138 @@ Noh* inserir(DicAVL& D, TC c, TV v) {
 		return D.raiz = inserir(D.raiz,D.raiz, c, v);
 }
 
-void preOrder(Noh *root)
+void preOrder(Noh *raiz)
 {
-    if(root != nullptr)
+    if(raiz != nullptr)
     {
 
-        cout <<'\n'<< root->chave;
-		if( root->esq != nullptr )
-			cout << " | Esq: " << root->esq->chave;
+        cout <<'\n'<< raiz->chave;
+		if( raiz->esq != nullptr )
+			cout << " | Esq: " << raiz->esq->chave;
 		else
 			cout << " | Esq: NULO";
-		if( root->dir != nullptr )
-			cout << " | Dir: " << root->dir->chave;
+		if( raiz->dir != nullptr )
+			cout << " | Dir: " << raiz->dir->chave;
 		else
 			cout << " | Dir: NULO";
-        preOrder(root->esq);
-        preOrder(root->dir);
+        preOrder(raiz->esq);
+        preOrder(raiz->dir);
     }
 }
 
-Noh * minValueNoh(Noh* no)
+Noh * getMinNoh(Noh* no)
 {
-    Noh* current = no;
+    Noh* aux = no;
  
-    /* loop down to find the leftmost leaf */
-    while (current->esq != NULL)
-        current = current->esq;
+    while (aux->esq != NULL)
+        aux = aux->esq;
  
-    return current;
+    return aux;
 }
 
 
-Noh* deleteNoh(Noh* root, int chave)
+Noh* deleteNoh(Noh* raiz, int chave)
 {
      
     // STEP 1: PERFORM STANDARD BST DELETE
-    if (root == NULL)
-        return root;
+    if (raiz == NULL)
+        return raiz;
  
     // If the chave to be deleted is smaller
-    // than the root's chave, then it lies
+    // than the raiz's chave, then it lies
     // in esq subtree
-    if ( chave < root->chave )
-        root->esq = deleteNoh(root->esq, chave);
+    if ( chave < raiz->chave )
+        raiz->esq = deleteNoh(raiz->esq, chave);
  
     // If the chave to be deleted is greater
-    // than the root's chave, then it lies
+    // than the raiz's chave, then it lies
     // in dir subtree
-    else if( chave > root->chave )
-        root->dir = deleteNoh(root->dir, chave);
+    else if( chave > raiz->chave )
+        raiz->dir = deleteNoh(raiz->dir, chave);
  
-    // if chave is same as root's chave, then
+    // if chave is same as raiz's chave, then
     // This is the Noh to be deleted
     else
     {
         // Noh with only one child or no child
-        if( (root->esq == NULL) ||
-            (root->dir == NULL) )
+        if( (raiz->esq == NULL) ||
+            (raiz->dir == NULL) )
         {
-            Noh *temp = root->esq ?
-                         root->esq :
-                         root->dir;
+            Noh *aux = raiz->esq ?
+                         raiz->esq :
+                         raiz->dir;
  
             // No child case
-            if (temp == NULL)
+            if (aux == NULL)
             {
-                temp = root;
-                root = NULL;
+                aux = raiz;
+                raiz = NULL;
             }
             else // One child case
-            *root = *temp; // Copy the contents of
+            *raiz = *aux; // Copy the contents of
                            // the non-empty child
-            free(temp);
+            free(aux);
         }
         else
         {
             // Noh with two children: Get the inorder
             // successor (smallest in the dir subtree)
-            Noh* temp = minValueNoh(root->dir);
+            Noh* aux = getMinNoh(raiz->dir);
  
             // Copy the inorder successor's
             // data to this Noh
-            root->chave = temp->chave;
+            raiz->chave = aux->chave;
  
             // Delete the inorder successor
-            root->dir = deleteNoh(root->dir,
-                                     temp->chave);
+            raiz->dir = deleteNoh(raiz->dir,
+                                     aux->chave);
         }
     }
  
     // If the tree had only one Noh
     // then return
-    if (root == NULL)
-    return root;
+    if (raiz == NULL)
+    return raiz;
  
-    // STEP 2: UPDATE h OF THE CURRENT Noh
-    root->h = 1 + max(getAltura(root->esq),
-                           getAltura(root->dir));
+    // STEP 2: UPDATE h OF THE aux Noh
+    raiz->h = 1 + max(getAltura(raiz->esq),
+                           getAltura(raiz->dir));
  
     // STEP 3: GET THE BALANCE FACTOR OF
     // THIS Noh (to check whether this
     // Noh became unbalanced)
-    int balance = getFB(root);
+    int balance = getFB(raiz);
  
     // If this Noh becomes unbalanced,
     // then there are 4 cases
  
     // esq esq Case
     if (balance > 1 &&
-        getFB(root->esq) >= 0)
-        return rotacaoDireita(root);
+        getFB(raiz->esq) >= 0)
+        return rotacaoDireita(raiz);
  
     // esq dir Case
     if (balance > 1 &&
-        getFB(root->esq) < 0)
+        getFB(raiz->esq) < 0)
     {
-        root->esq = rotacaoEsquerda(root->esq);
-        return rotacaoDireita(root);
+        raiz->esq = rotacaoEsquerda(raiz->esq);
+        return rotacaoDireita(raiz);
     }
  
     // dir dir Case
     if (balance < -1 &&
-        getFB(root->dir) <= 0)
-        return rotacaoEsquerda(root);
+        getFB(raiz->dir) <= 0)
+        return rotacaoEsquerda(raiz);
  
     // dir esq Case
     if (balance < -1 &&
-        getFB(root->dir) > 0)
+        getFB(raiz->dir) > 0)
     {
-        root->dir = rotacaoDireita(root->dir);
-        return rotacaoEsquerda(root);
+        raiz->dir = rotacaoDireita(raiz->dir);
+        return rotacaoEsquerda(raiz);
     }
  
-    return root;
+    return raiz;
 }
 
 Noh* procurar(Noh* n, TC c) {
