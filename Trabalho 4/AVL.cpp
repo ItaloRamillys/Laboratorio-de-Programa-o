@@ -36,7 +36,7 @@ int getAltura(Noh* n)
 	else
 		return n->h;
 }
-int getFB(Noh* n) // Fator de difamento
+int getFB(Noh* n) // Fator de balanceamento
 {
 	if (n == nullptr)
 		return 0;
@@ -97,18 +97,7 @@ Noh* inserir(Noh* n, Noh* lp, TC c, TV v) {
 	if (n == nullptr) {
 		cout << "\nInserindo na folha";
 		Noh *n = new Noh;
-
-		
-		if(n != lp)
-		{
-			cout << "\nRaiz != pai";
-			n->pai = lp;
-		}
-		else
-		{
-			cout << "\nRaiz == pai";
-			n->pai = nullptr;
-		}
+		n->pai = lp;
 		n->esq = n->dir = nullptr;
 		n->chave = c;
 		n->valor = v;
@@ -119,19 +108,19 @@ Noh* inserir(Noh* n, Noh* lp, TC c, TV v) {
 	cout << '\n';
 	if (c < n->chave) 
 	{
-		// cout << c << " < " << n->chave << " - e";
+		cout << c << " < " << n->chave << " - e";
 		n->esq = inserir(n->esq, n, c, v);
 	}
 	else if (c > n->chave) 
 	{
-		// cout << c << " < " << n->chave << " - d";
+		cout << c << " < " << n->chave << " - d";
 		n->dir = inserir(n->dir, n, c, v);
 	}
 	else{
 		return nullptr;
 		cout << "\nChave duplicada \n";
 	}
-	// cout << "\nRaiz observada: " << n->chave;
+	cout << "\nRaiz observada: " << n->chave;
 	n->h = 1 + max(getAltura(n->esq), getAltura(n->dir));
 
 	int dif = getFB(n);
@@ -140,22 +129,22 @@ Noh* inserir(Noh* n, Noh* lp, TC c, TV v) {
 
 	if (dif < -1 && c > n->dir->chave)
 	{
-		// cout <<"\nRotacao Esq NEGATIVO";
+		cout <<"\nRotacao Esq NEGATIVO";
 		return rotacaoEsquerda(n);
 	}
 	if (dif < -1 && c < n->dir->chave) {
-		// cout <<"\nRotacao Dir NEGATIVO";
+		cout <<"\nRotacao Dir NEGATIVO";
 		n->dir = rotacaoDireita(n->dir);
 		return rotacaoEsquerda(n);
 	}
 	
 	if (dif > 1 && c < n->esq->chave)
 	{
-		// cout <<"\nRotacao Dir POSITIVO";
+		cout <<"\nRotacao Dir POSITIVO";
 		return rotacaoDireita(n);
 	}
 	if (dif > 1 && c > n->esq->chave) {
-		// cout <<"\nRotacao Esq POSITIVO";
+		cout <<"\nRotacao Esq POSITIVO";
 		n->esq = rotacaoEsquerda(n->esq);
 		return rotacaoDireita(n);
 	}
@@ -165,111 +154,144 @@ Noh* inserir(Noh* n, Noh* lp, TC c, TV v) {
 
 Noh* inserir(DicAVL& D, TC c, TV v) {
 	if (D.raiz == nullptr)
-		return D.raiz = inserir(D.raiz, D.raiz, c, v);
+		return D.raiz = inserir(D.raiz,D.raiz, c, v);
 	else
-		return D.raiz = inserir(D.raiz, D.raiz, c, v);
+		return D.raiz = inserir(D.raiz,D.raiz, c, v);
 }
 
-void printArv(Noh *raiz)
+void preOrder(Noh *root)
 {
-    if(raiz != nullptr)
+    if(root != nullptr)
     {
-        cout <<'\n'<< raiz->chave;
-		if( raiz->pai != nullptr )
-			cout << " | Pai: " << raiz->pai->chave;
-		else
-			cout << " | Pai: NULO";
-		if( raiz->esq != nullptr )
-			cout << " | Esq: " << raiz->esq->chave;
+
+        cout <<'\n'<< root->chave;
+		if( root->esq != nullptr )
+			cout << " | Esq: " << root->esq->chave;
 		else
 			cout << " | Esq: NULO";
-		if( raiz->dir != nullptr )
-			cout << " | Dir: " << raiz->dir->chave;
+		if( root->dir != nullptr )
+			cout << " | Dir: " << root->dir->chave;
 		else
 			cout << " | Dir: NULO";
-        printArv(raiz->esq);
-        printArv(raiz->dir);
+        preOrder(root->esq);
+        preOrder(root->dir);
     }
 }
 
-Noh* menorChave(Noh* no)
+Noh * minValueNoh(Noh* no)
 {
-    Noh* atual = no;
-
-    while (atual->esq != NULL)
-        atual = atual->esq;
+    Noh* current = no;
  
-    return atual;
+    /* loop down to find the leftmost leaf */
+    while (current->esq != NULL)
+        current = current->esq;
+ 
+    return current;
 }
 
-Noh* deletar(Noh* raiz, TC chave)
+
+Noh* deleteNoh(Noh* root, int chave)
 {
-    
-    if (raiz == NULL)
-        return raiz;
+     
+    // STEP 1: PERFORM STANDARD BST DELETE
+    if (root == NULL)
+        return root;
  
-    if ( chave < raiz->chave )
-        raiz->esq = deletar(raiz->esq, chave);
+    // If the chave to be deleted is smaller
+    // than the root's chave, then it lies
+    // in esq subtree
+    if ( chave < root->chave )
+        root->esq = deleteNoh(root->esq, chave);
  
-    else if( chave > raiz->chave )
-        raiz->dir = deletar(raiz->dir, chave);
+    // If the chave to be deleted is greater
+    // than the root's chave, then it lies
+    // in dir subtree
+    else if( chave > root->chave )
+        root->dir = deleteNoh(root->dir, chave);
  
+    // if chave is same as root's chave, then
+    // This is the Noh to be deleted
     else
     {
-        if( (raiz->esq == NULL) ||
-            (raiz->dir == NULL) )
+        // Noh with only one child or no child
+        if( (root->esq == NULL) ||
+            (root->dir == NULL) )
         {
-            Noh *temp = raiz->esq ?
-                         raiz->esq :
-                         raiz->dir;
+            Noh *temp = root->esq ?
+                         root->esq :
+                         root->dir;
  
+            // No child case
             if (temp == NULL)
             {
-                temp = raiz;
-                raiz = NULL;
+                temp = root;
+                root = NULL;
             }
-            else
-            *raiz = *temp;
+            else // One child case
+            *root = *temp; // Copy the contents of
+                           // the non-empty child
             free(temp);
         }
         else
         {
-            Noh* temp = menorChave(raiz->dir);
+            // Noh with two children: Get the inorder
+            // successor (smallest in the dir subtree)
+            Noh* temp = minValueNoh(root->dir);
  
-            raiz->chave = temp->chave;
+            // Copy the inorder successor's
+            // data to this Noh
+            root->chave = temp->chave;
  
-            raiz->dir = deletar(raiz->dir,
+            // Delete the inorder successor
+            root->dir = deleteNoh(root->dir,
                                      temp->chave);
         }
     }
  
-    if (raiz == NULL)
-    return raiz;
+    // If the tree had only one Noh
+    // then return
+    if (root == NULL)
+    return root;
  
-    raiz->h = 1 + max(getAltura(raiz->esq),
-                           getAltura(raiz->dir));
-
-    int dif = getFB(raiz);
+    // STEP 2: UPDATE h OF THE CURRENT Noh
+    root->h = 1 + max(getAltura(root->esq),
+                           getAltura(root->dir));
  
-    if (dif > 1 && getFB(raiz->esq) >= 0)
-        return rotacaoDireita(raiz);
+    // STEP 3: GET THE BALANCE FACTOR OF
+    // THIS Noh (to check whether this
+    // Noh became unbalanced)
+    int balance = getFB(root);
  
-    if (dif > 1 && getFB(raiz->esq) < 0)
+    // If this Noh becomes unbalanced,
+    // then there are 4 cases
+ 
+    // esq esq Case
+    if (balance > 1 &&
+        getFB(root->esq) >= 0)
+        return rotacaoDireita(root);
+ 
+    // esq dir Case
+    if (balance > 1 &&
+        getFB(root->esq) < 0)
     {
-        raiz->esq = rotacaoEsquerda(raiz->esq);
-        return rotacaoDireita(raiz);
+        root->esq = rotacaoEsquerda(root->esq);
+        return rotacaoDireita(root);
     }
  
-    if (dif < -1 && getFB(raiz->dir) <= 0)
-        return rotacaoEsquerda(raiz);
+    // dir dir Case
+    if (balance < -1 &&
+        getFB(root->dir) <= 0)
+        return rotacaoEsquerda(root);
  
-    if (dif < -1 && getFB(raiz->dir) > 0)
+    // dir esq Case
+    if (balance < -1 &&
+        getFB(root->dir) > 0)
     {
-        raiz->dir = rotacaoDireita(raiz->dir);
-        return rotacaoEsquerda(raiz);
+        root->dir = rotacaoDireita(root->dir);
+        return rotacaoEsquerda(root);
     }
  
-    return raiz;
+    return root;
 }
 
 Noh* procurar(Noh* n, TC c) {
@@ -298,74 +320,55 @@ int main() {
 	DicAVL D;
 	inicializar(D);
 
-	inserir(D, 10, 1);
-	// if(D.raiz->esq != nullptr)
-	// {
-	// 	cout << "Raiz: " << D.raiz->chave << '\n';
-	// 	cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
-	// }
-	// if(D.raiz->dir != nullptr)
-	// {
-	// 	cout << "Raiz: " << D.raiz->chave << '\n';
-	// 	cout << "Filho direito: " << D.raiz->dir->chave << '\n';
-	// }
-	// cout << "Altura raiz: " << D.raiz->h << '\n';
-	
-	inserir(D, 5, 2);
-	
-	// if(D.raiz->esq != nullptr)
-	// {
-	// 	cout << "Raiz: " << D.raiz->chave << '\n';
-	// 	cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
-	// }
-	// if(D.raiz->dir != nullptr)
-	// {
-	// 	cout << "Raiz: " << D.raiz->chave << '\n';
-	// 	cout << "Filho direito: " << D.raiz->dir->chave << '\n';
-	// }
-	// cout << "Altura raiz: " << D.raiz->h << '\n';
-	
+	inserir(D, 1, 1);
+	if(D.raiz->esq != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
+	}
+	if(D.raiz->dir != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho direito: " << D.raiz->dir->chave << '\n';
+	}
+		cout << "Altura raiz: " << D.raiz->h << '\n';
+	inserir(D, 2, 2);
+	if(D.raiz->esq != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
+	}
+	if(D.raiz->dir != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho direito: " << D.raiz->dir->chave << '\n';
+	}
+		cout << "Altura raiz: " << D.raiz->h << '\n';
 	inserir(D, 3, 3);
-	
-	// cout << "Chave: " << D.raiz->chave;
-	// if(D.raiz->esq != nullptr){
-	// 	cout << "Raiz: " << D.raiz->chave << '\n';
-	// 	cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
-	// }
-	// if(D.raiz->dir != nullptr)
-	// {
-	// 	cout << "Raiz: " << D.raiz->chave << '\n';
-	// 	cout << "Filho direito: " << D.raiz->dir->chave << '\n';
-	// }
-	// cout << "Altura raiz: " << D.raiz->h << '\n';
+	cout << "Chave: " << D.raiz->chave;
+	if(D.raiz->esq != nullptr){
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
+	}
+	if(D.raiz->dir != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho direito: " << D.raiz->dir->chave << '\n';
+	}
+		cout << "Altura raiz: " << D.raiz->h << '\n';
+	inserir(D, 4, 10);
+	if(D.raiz->esq != nullptr){
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
+	}
+	if(D.raiz->dir != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho direito: " << D.raiz->dir->chave << '\n';
+	}
+	cout << "\nAltura raiz: " << D.raiz->h << '\n';
 
-	inserir(D, 7, 10);
-	
-	// if(D.raiz->esq != nullptr){
-	// 	cout << "Raiz: " << D.raiz->chave << '\n';
-	// 	cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
-	// }
-	// if(D.raiz->dir != nullptr)
-	// {
-	// 	cout << "Raiz: " << D.raiz->chave << '\n';
-	// 	cout << "Filho direito: " << D.raiz->dir->chave << '\n';
-	// }
-	// cout << "\nAltura raiz: " << D.raiz->h << '\n';
-
-	inserir(D, 8, 10);
-
-	// if(D.raiz->esq != nullptr)
-	// {
-	// 	cout << "Raiz: " << D.raiz->chave << '\n';
-	// 	cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
-	// }
-	// if(D.raiz->dir != nullptr)
-	// {
-	// 	cout << "Raiz: " << D.raiz->chave << '\n';
-	// 	cout << "Filho direito: " << D.raiz->dir->chave << '\n';
-	// }
-
-	inserir(D, 11, 0);
+	inserir(D, 5, 10);
 
 	if(D.raiz->esq != nullptr)
 	{
@@ -378,7 +381,21 @@ int main() {
 		cout << "Filho direito: " << D.raiz->dir->chave << '\n';
 	}
 
-	deletar(D.raiz, 5);
+	inserir(D, 6, 0);
 
-	printArv(D.raiz);
+	preOrder(D.raiz);
+	if(D.raiz->esq != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho esquerdo: " << D.raiz->esq->chave << '\n';
+	}
+	if(D.raiz->dir != nullptr)
+	{
+		cout << "Raiz: " << D.raiz->chave << '\n';
+		cout << "Filho direito: " << D.raiz->dir->chave << '\n';
+	}
+
+	deleteNoh(D.raiz, 5);
+
+	preOrder(D.raiz);
 }

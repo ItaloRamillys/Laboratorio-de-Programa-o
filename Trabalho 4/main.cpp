@@ -20,8 +20,8 @@ int main()
             its[i - 48] = it;
         }
 
-        cout<< "\nBegin: " << D.begin().valor();
-        cout<< "\nEnd: " << D.end().valor();
+        // cout<< "\nBegin: " << D.begin().valor();
+        // cout<< "\nEnd: " << D.end().valor();
 
         for (it = D.begin(); it != D.end(); ++it)
         {
