@@ -16,7 +16,10 @@ int main()
             cout<<"\n---------------------------------------\n";
             it = D.inserir(i, (char)i);
             if (it == D.end())
-                return 2;
+            {
+                cout << "Achei sentinela";
+                // return 2;
+            }
             its[i - 48] = it;
         }
 
