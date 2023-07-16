@@ -308,7 +308,8 @@ public:
   DicioAVL()
   {
     raiz = nullptr;
-    sent.dir = sent.esq = &sent;
+    sent.dir = sent.esq = nullptr;
+    sent.altura = 0;
   }
   DicioAVL(Noh sent, Noh *raiz) : raiz(raiz), sent(sent) {}
 
@@ -517,19 +518,19 @@ public:
 
   void printArv(Noh *raiz)
   {
-    if (raiz != nullptr)
+    if (raiz != nullptr && raiz != &sent)
     {
       cout << '\n'
            << raiz->chave;
-      if (raiz->pai != nullptr)
+      if (raiz->pai != nullptr && raiz->pai != &sent)
         cout << " | Pai: " << raiz->pai->chave;
       else
         cout << " | Pai: -";
-      if (raiz->esq != nullptr)
+      if (raiz->esq != nullptr && raiz->esq != &sent)
         cout << " | Esq: " << raiz->esq->chave;
       else
         cout << " | Esq: -";
-      if (raiz->dir != nullptr)
+      if (raiz->dir != nullptr && raiz->dir != &sent)
         cout << " | Dir: " << raiz->dir->chave;
       else
         cout << " | Dir: -";
@@ -543,7 +544,8 @@ public:
   {
     cout << "\nInserir\nChave:" << c << "\nValor:" << v;
     Noh *n = new Noh;
-    n->esq = n->dir = nullptr;
+    //n->esq = n->dir = nullptr;
+    n->esq = n->dir = &sent;
     n->chave = c;
     n->valor = v;
     n->altura = 1;
@@ -562,14 +564,14 @@ public:
 
     cout << '\n';
 
-    while (aux != nullptr)
+    while (aux != nullptr && aux != &sent)
     {
       cout << "\nIterador: " << aux->valor << endl;
       if (c < aux->chave)
       {
         cout << c << " < " << aux->chave << " - e";
         // printNoh(aux);
-        if (aux->esq != nullptr)
+        if (aux->esq != nullptr && aux->esq != &sent)
         {
           aux = aux->esq;
           cout << "\nIndo pro noh[E]: " << aux->valor;
@@ -588,7 +590,7 @@ public:
         cout << c << " > " << aux->chave << " - d";
         // printNoh(aux);
 
-        if (aux->dir != nullptr)
+        if (aux->dir != nullptr && aux->dir != &sent)
         {
           aux = aux->dir;
           cout << "\nIndo pro noh[D]: " << aux->valor;
@@ -611,13 +613,14 @@ public:
     //  }
     cout << "\n--------------------------\n";
     cout << "Back";
-    while (n != nullptr)
+    while (n != nullptr && n != &sent)
     {
       cout<<"\nChamada noh:\n";
       printNoh(n);
       // if(n == nullptr) break;
       // n->altura = n->altura + 1;
 
+      cout << "\nAlturas: " << getAltura(n->esq) << " - " <<  getAltura(n->dir);
       n->altura = 1 + max(getAltura(n->esq), getAltura(n->dir));
       // cout << "\nMax: " << max(getAltura(raiz->esq), getAltura(raiz->dir));
 
@@ -669,8 +672,9 @@ public:
     cout << "\nRaiz: " << raiz->chave;
     cout << "\nAltura da raiz: " << raiz->altura;
     printArv(raiz);
+    Iterador i(n);
     // raiz = n;
-    return n;
+    return i;
   }
 
   // --------------------------------------------------------------------------
