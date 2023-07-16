@@ -38,7 +38,7 @@ int main()
                 return 2;
             D.remover(it);
         }
-        cout << "Executou o teste b´asico conforme esperado.\n";
+        cout << "\nExecutou o teste b´asico conforme esperado.\n";
     }
     catch (const exception &e)
     {

@@ -471,6 +471,10 @@ public:
       ey->pai = paiY;
       paiY->esq = ey;
     }
+    
+    Noh *dey = ey->dir;
+    if(dey != nullptr)
+      dey->pai = y;
 
     ey->dir = y;
     y->esq = dy;
@@ -496,7 +500,11 @@ public:
       dy->pai = paiY;
       paiY->dir = dy;
     }
-
+    
+    Noh *edy = dy->esq;
+    if(edy != nullptr)
+      edy->pai = y;
+    
     dy->esq = y;
     y->dir = ey;
     y->pai = dy;
@@ -509,22 +517,22 @@ public:
 
   void printArv(Noh *raiz)
   {
-    if (raiz != nullptr && raiz != &sent)
+    if (raiz != nullptr)
     {
       cout << '\n'
            << raiz->chave;
       if (raiz->pai != nullptr)
         cout << " | Pai: " << raiz->pai->chave;
       else
-        cout << " | Pai: NULO";
+        cout << " | Pai: -";
       if (raiz->esq != nullptr)
         cout << " | Esq: " << raiz->esq->chave;
       else
-        cout << " | Esq: NULO";
+        cout << " | Esq: -";
       if (raiz->dir != nullptr)
         cout << " | Dir: " << raiz->dir->chave;
       else
-        cout << " | Dir: NULO";
+        cout << " | Dir: -";
       cout << " | Altura: " << raiz->altura;
       printArv(raiz->esq);
       printArv(raiz->dir);
@@ -535,7 +543,7 @@ public:
   {
     cout << "\nInserir\nChave:" << c << "\nValor:" << v;
     Noh *n = new Noh;
-    n->esq = n->dir = &sent;
+    n->esq = n->dir = nullptr;
     n->chave = c;
     n->valor = v;
     n->altura = 1;
@@ -554,14 +562,14 @@ public:
 
     cout << '\n';
 
-    while (aux != nullptr && aux != &sent)
+    while (aux != nullptr)
     {
       cout << "\nIterador: " << aux->valor << endl;
       if (c < aux->chave)
       {
         cout << c << " < " << aux->chave << " - e";
         // printNoh(aux);
-        if (aux->esq != nullptr && aux->esq != &sent)
+        if (aux->esq != nullptr)
         {
           aux = aux->esq;
           cout << "\nIndo pro noh[E]: " << aux->valor;
@@ -580,7 +588,7 @@ public:
         cout << c << " > " << aux->chave << " - d";
         // printNoh(aux);
 
-        if (aux->dir != nullptr && aux->dir != &sent)
+        if (aux->dir != nullptr)
         {
           aux = aux->dir;
           cout << "\nIndo pro noh[D]: " << aux->valor;
