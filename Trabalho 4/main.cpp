@@ -9,9 +9,9 @@ int main()
     try
     {
         DicioAVL<int, char> D;
-        DicioAVL<int, char>::Iterador its[10], it;
+        DicioAVL<int, char>::Iterador its[20], it;
         int i;
-        for (i = 48; i < 58; ++i)
+        for (i = 48; i < 68; ++i)
         {
             cout<<"\n---------------------------------------\n";
             it = D.inserir(i, (char)i);
