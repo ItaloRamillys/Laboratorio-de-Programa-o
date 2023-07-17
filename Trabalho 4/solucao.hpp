@@ -513,6 +513,7 @@ public:
 
   void printArv(Noh *raiz)
   {
+
     if (raiz != nullptr && raiz != &sent)
     {
       cout << '\n'
@@ -676,6 +677,8 @@ public:
 
     cout << "\nRaiz: " << raiz->chave;
     cout << "\nAltura da raiz: " << raiz->altura;
+    
+    cout << "\n\n---------- ARVORE AVL ----------\n";
     printArv(raiz);
     Iterador i(nohRet);
     // raiz = n;
@@ -739,34 +742,68 @@ public:
     Iterador x(buscar(i.chave()));
 
     Noh *aux = x.n;
-    
+    Noh *suc = nullptr;
     Noh *temp;
+    Noh *paiAux = aux->pai;
+
     if ((aux->esq == nullptr) ||
         (aux->dir == nullptr))
     {
       cout << "\n[FOLHA]";
       temp = aux->esq ? aux->esq : aux->dir;
 
-      if (temp == nullptr)
+      if(paiAux != nullptr)
       {
-        temp = aux;
-        aux = nullptr;
+        if(aux == paiAux->dir)
+        {
+          paiAux->dir = temp;
+        }else
+        {
+          paiAux->esq = temp;
+        }
       }
-      else
-        *aux = *temp;
 
-      free(temp);
+      aux = nullptr;
+      free(aux);
     }
     else
     {
       cout << "\n[NAO FOLHA]";
-      Noh *aux = getMinNoh(aux->dir);
+      Noh *p;
+      Noh *temp = aux;
+      suc = aux;
+      if (suc->dir != nullptr)
+      {
+        suc = suc->dir;
 
-      aux->chave = temp->chave;
-      aux->dir = 
-      remover(buscar(temp->chave));
+        while (suc->esq != nullptr)
+        {
+          suc = suc->esq;
+        }
+      }
+      else
+      {
+        p = suc->pai;
+        while (p != nullptr && suc == p->dir)
+        {
+          suc = p;
+          p = p->pai;
+        }
+
+        suc = p;
+      }
     }
-
+    
+    if(suc != NULL)
+    {
+      cout << "\nNoh sucessor eh: ";
+      printNoh(suc);
+      aux = suc;
+      aux->pai = temp->pai;
+      aux->esq = temp->esq;
+      aux->dir = temp->dir;
+    }
+    
     if (aux == nullptr)
       // return raiz;
 
@@ -825,6 +862,9 @@ public:
 
       aux = aux->pai;
     }
+
+    cout << "\n\n---------- ARVORE AVL ----------\n";
+    printArv(raiz);
 
   }
 

@@ -15,7 +15,7 @@ int main()
         {
             cout<<"\n---------------------------------------\n";
             it = D.inserir(i, (char)i);
-            cout << "\nValor inserido: " << it.valor();
+            //cout << "\n\nValor inserido: " << it.valor() << "\n\n";
             if (it == D.end())
             {
                 cout << "\nAchei sentinela";
