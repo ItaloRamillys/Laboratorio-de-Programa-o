@@ -267,7 +267,7 @@ public:
     // Iterador& operator ++ ();
     Iterador &operator++()
     {
-      // cout << "\nRaiz ob: " << n->chave;
+      // //cout << "\nRaiz ob: " << n->chave;
       //  if (n->dir != nullptr)
       //  {
       //    n = n->dir;
@@ -277,7 +277,7 @@ public:
       //    return *this;
       //  }
 
-      // cout << "\nComparando: " << n->pai->chave << " - " << n->chave;
+      // //cout << "\nComparando: " << n->pai->chave << " - " << n->chave;
       // Noh *paiN = n->pai;
 
       // if(paiN->chave <= n->chave)
@@ -433,8 +433,7 @@ public:
 
   void printNoh(Noh *x)
   {
-    cout << "\n"
-         << x->chave << " : " << x->valor;
+    cout << "\nNoh:" << x->chave << " : " << x->valor;
 
     cout << " | PAI: ";
     if (x->pai != nullptr)
@@ -458,7 +457,7 @@ public:
 
   Noh *rotacaoDireita(Noh *y)
   {
-    cout << "\nRotacao em[D]: " << y->chave;
+    //cout << "\nRotacao em[D]: " << y->chave;
     Noh *ey = y->esq;
     ey->pai = y->pai;
     Noh *dy = ey->dir;
@@ -480,13 +479,13 @@ public:
     y->altura = max(getAltura(y->esq), getAltura(y->dir)) + 1;
     ey->altura = max(getAltura(ey->esq), getAltura(ey->dir)) + 1;
 
-    printNoh(ey);
+    //printNoh(ey);
     return ey;
   }
 
   Noh *rotacaoEsquerda(Noh *y)
   {
-    cout << "\nRotacao em[E]: " << y->chave;
+    //cout << "\nRotacao em[E]: " << y->chave;
     Noh *dy = y->dir;
     dy->pai = y->pai;
     Noh *ey = dy->esq;
@@ -538,7 +537,7 @@ public:
 
   Iterador inserir(TC c, TV v)
   {
-    cout << "\nInserir\nChave:" << c << "\nValor:" << v;
+    //cout << "\nInserir\nChave:" << c << "\nValor:" << v;
     Noh *n = new Noh;
     n->esq = n->dir = nullptr;
     // n->esq = n->dir = &sent;
@@ -549,7 +548,7 @@ public:
 
     // Iterador i(inserirAux(raiz, n));
 
-    // cout << "\nArvore ->";
+    // //cout << "\nArvore ->";
     // printArv(raiz);
     // return i;
 
@@ -558,27 +557,27 @@ public:
     // if (raiz == &sent)
     if (raiz == nullptr)
     {
-      cout << "\nInserindo na arvore vazia";
+      //cout << "\nInserindo na arvore vazia";
       raiz = n;
       Iterador i(n);
       return i;
     }
 
-    cout << "\nRaiz atual:" << raiz->chave;
+    //cout << "\nRaiz atual:" << raiz->chave;
 
-    cout << '\n';
+    //cout << '\n';
 
     while (aux != nullptr && aux != &sent)
     {
-      cout << "\nIterador: " << aux->valor << endl;
+      //cout << "\nIterador: " << aux->valor << endl;
       if (c < aux->chave)
       {
-        cout << c << " < " << aux->chave << " - e";
+        //cout << c << " < " << aux->chave << " - e";
         // printNoh(aux);
         if (aux->esq != nullptr && aux->esq != &sent)
         {
           aux = aux->esq;
-          cout << "\nIndo pro noh[E]: " << aux->valor;
+          //cout << "\nIndo pro noh[E]: " << aux->valor;
         }
         else
         {
@@ -591,13 +590,13 @@ public:
       }
       else if (c > aux->chave)
       {
-        cout << c << " > " << aux->chave << " - d";
+        //cout << c << " > " << aux->chave << " - d";
         // printNoh(aux);
 
         if (aux->dir != nullptr && aux->dir != &sent)
         {
           aux = aux->dir;
-          cout << "\nIndo pro noh[D]: " << aux->valor;
+          //cout << "\nIndo pro noh[D]: " << aux->valor;
         }
         else
         {
@@ -613,30 +612,30 @@ public:
     // aux = n;
     //  else{
     //    return nullptr;
-    //    cout << "\nChave duplicada \n";
+    //    //cout << "\nChave duplicada \n";
     //  }
-    cout << "\n--------------------------\n";
-    cout << "Back";
+    //cout << "\n--------------------------\n";
+    //cout << "Back";
 
     Noh *nohRet = n;
     while (n != nullptr && n != &sent)
     {
-      cout << "\nChamada noh:\n";
-      printNoh(n);
+      //cout << "\nChamada noh:\n";
+      //printNoh(n);
       // if(n == nullptr) break;
       // n->altura = n->altura + 1;
 
-      cout << "\nAlturas: " << getAltura(n->esq) << " - " << getAltura(n->dir);
+      //cout << "\nAlturas: " << getAltura(n->esq) << " - " << getAltura(n->dir);
       n->altura = 1 + max(getAltura(n->esq), getAltura(n->dir));
-      // cout << "\nMax: " << max(getAltura(raiz->esq), getAltura(raiz->dir));
+      // //cout << "\nMax: " << max(getAltura(raiz->esq), getAltura(raiz->dir));
 
-      // cout << "\nALtura atual: " << raiz->altura;
+      // //cout << "\nALtura atual: " << raiz->altura;
       int dif = getBalanceamento(n);
-      cout << "\nDif: " << dif << ' ';
+      //cout << "\nDif: " << dif << ' ';
 
       if (dif < -1 && n->dir != nullptr && c > n->dir->chave)
       {
-        cout << "\nRotacao Esq NEGATIVO";
+        //cout << "\nRotacao Esq NEGATIVO";
         // Verificar aqui se o noh é a raiz geral da arvore
         if (n == raiz)
           raiz = rotacaoEsquerda(n);
@@ -646,7 +645,7 @@ public:
 
       if (dif < -1 && n->dir != nullptr && c < n->dir->chave)
       {
-        cout << "\nRotacao Dir NEGATIVO";
+        //cout << "\nRotacao Dir NEGATIVO";
         n->dir = rotacaoDireita(n->dir);
         if (n == raiz)
           raiz = rotacaoEsquerda(n);
@@ -656,7 +655,7 @@ public:
 
       if (dif > 1 && n->esq != nullptr && c < n->esq->chave)
       {
-        cout << "\nRotacao Dir POSITIVO";
+        //cout << "\nRotacao Dir POSITIVO";
         if (n == raiz)
           raiz = rotacaoDireita(n);
         else
@@ -664,7 +663,7 @@ public:
       }
       if (dif > 1 && n->esq != nullptr && c > n->esq->chave)
       {
-        cout << "\nRotacao Esq POSITIVO";
+        //cout << "\nRotacao Esq POSITIVO";
         n->esq = rotacaoEsquerda(n->esq);
         if (n == raiz)
           raiz = rotacaoDireita(n);
@@ -675,10 +674,10 @@ public:
       n = n->pai;
     }
 
-    cout << "\nRaiz: " << raiz->chave;
-    cout << "\nAltura da raiz: " << raiz->altura;
+    //cout << "\nRaiz: " << raiz->chave;
+    //cout << "\nAltura da raiz: " << raiz->altura;
     
-    cout << "\n\n---------- ARVORE AVL ----------\n";
+    //cout << "\n\n---------- ARVORE AVL ----------\n";
     printArv(raiz);
     Iterador i(nohRet);
     // raiz = n;
@@ -697,7 +696,7 @@ public:
 
     while (true)
     {
-      // cout << "\nRaiz busca: " << raizAux->chave;
+      // //cout << "\nRaiz busca: " << raizAux->chave;
       if (raizAux->chave == c)
         break;
       if (raizAux->chave > c)
@@ -737,7 +736,7 @@ public:
   void remover(Iterador i)
   {
 
-    cout << "\nBuscando para apagar: " << i.chave();
+    //cout << "\nBuscando para apagar: " << i.chave();
 
     Iterador x(buscar(i.chave()));
 
@@ -745,22 +744,58 @@ public:
     Noh *suc = nullptr;
     Noh *temp;
     Noh *paiAux = aux->pai;
+    Noh *p;
+    bool umFilhoOuMenos = false;
+
+    suc = aux;
+    if (suc->dir != nullptr)
+    {
+      suc = suc->dir;
+
+      while (suc->esq != nullptr)
+      {
+        suc = suc->esq;
+      }
+    }
+    else
+    {
+      p = suc->pai;
+      while (p != nullptr && suc == p->dir)
+      {
+        suc = p;
+        p = p->pai;
+      }
+
+      suc = p;
+    }
 
     if ((aux->esq == nullptr) ||
         (aux->dir == nullptr))
     {
+      umFilhoOuMenos = true;
       cout << "\n[FOLHA]";
       temp = aux->esq ? aux->esq : aux->dir;
+      cout << "\nTEMP: ";
+      if(temp != nullptr)
+        printNoh(temp);
 
       if(paiAux != nullptr)
       {
+        cout << "\nPai: ";
+        printNoh(paiAux);
         if(aux == paiAux->dir)
         {
+          //cout << " - Sou filho da direita";
           paiAux->dir = temp;
+          suc->dir = aux->dir;
         }else
         {
+          //cout << " - Sou filho da esquerda";
           paiAux->esq = temp;
+          suc->esq = aux->esq;
         }
+        if(temp != nullptr)
+          temp->pai = paiAux;
       }
 
       aux = nullptr;
@@ -768,99 +803,89 @@ public:
     }
     else
     {
-      cout << "\n[NAO FOLHA]";
-      Noh *p;
-      Noh *temp = aux;
-      suc = aux;
-      if (suc->dir != nullptr)
-      {
-        suc = suc->dir;
-
-        while (suc->esq != nullptr)
-        {
-          suc = suc->esq;
-        }
-      }
-      else
-      {
-        p = suc->pai;
-        while (p != nullptr && suc == p->dir)
-        {
-          suc = p;
-          p = p->pai;
-        }
-
-        suc = p;
-      }
+      //cout << "\n[NAO FOLHA]";
+      //Noh *temp = aux;
     }
     
-    if(suc != NULL)
+    if(!umFilhoOuMenos)
     {
-      cout << "\nNoh sucessor eh: ";
+      //cout << "\nNoh sucessor eh: ";
       printNoh(suc);
       aux = suc;
       aux->pai = temp->pai;
       aux->esq = temp->esq;
       aux->dir = temp->dir;
-    }
     
-    if (aux == nullptr)
+      Noh* p = NULL;
+
+      if (p != NULL)
+          p->esq = suc->dir;
+      else
+          aux->dir = suc->dir;
+
+      aux = suc;
+      
+      suc = nullptr;
+      free(suc);
+    }
+
+    // if (aux == nullptr)
       // return raiz;
 
-    while (aux != nullptr && aux != &sent)
+    while (paiAux != nullptr)
     {
       cout << "\nChamada noh:\n";
-      printNoh(aux);
+      printNoh(paiAux);
       // if(n == nullptr) break;
       // n->altura = n->altura + 1;
 
-      cout << "\nAlturas: " << getAltura(aux->esq) << " - " << getAltura(aux->dir);
-      // n->altura = 1 + max(getAltura(aux->esq), getAltura(aux->dir));
-      // cout << "\nMax: " << max(getAltura(raiz->esq), getAltura(raiz->dir));
+      //cout << "\nAlturas: " << getAltura(aux->esq) << " - " << getAltura(aux->dir);
+      paiAux->altura = 1 + max(getAltura(paiAux->esq), getAltura(paiAux->dir));
+      // //cout << "\nMax: " << max(getAltura(raiz->esq), getAltura(raiz->dir));
 
-      // cout << "\nALtura atual: " << raiz->altura;
-      int dif = getBalanceamento(aux);
-      cout << "\nDif: " << dif << ' ';
+      // //cout << "\nALtura atual: " << raiz->altura;
+      int dif = getBalanceamento(paiAux);
+      //cout << "\nDif: " << dif << ' ';
 
-      // if (dif < -1 && aux->dir != nullptr && c > aux->dir->chave)
-      // {
-      //   cout << "\nRotacao Esq NEGATIVO";
-      //   // Verificar aqui se o noh é a raiz geral da arvore
-      //   if (aux == raiz)
-      //     raiz = rotacaoEsquerda(aux);
-      //   else
-      //     rotacaoEsquerda(aux);
-      // }
+      if (dif > 1 && paiAux->esq != nullptr && getBalanceamento(paiAux->esq) >= 0)
+      {
+        //cout << "\nRotacao Esq NEGATIVO";
+        // Verificar aqui se o noh é a raiz geral da arvore
+        if (paiAux == raiz)
+          raiz = rotacaoDireita(paiAux);
+        else
+          rotacaoDireita(paiAux);
+      }
 
-      // if (dif < -1 && aux->dir != nullptr && c < aux->dir->chave)
-      // {
-      //   cout << "\nRotacao Dir NEGATIVO";
-      //   raiz->dir = rotacaoDireita(aux->dir);
-      //   if (aux == raiz)
-      //     raiz = rotacaoEsquerda(aux);
-      //   else
-      //     rotacaoEsquerda(aux);
-      // }
+      if (dif > 1 && paiAux->esq != nullptr && getBalanceamento(paiAux->esq) < 0)
+      {
+        //cout << "\nRotacao Dir NEGATIVO";
+        paiAux->dir = rotacaoEsquerda(paiAux->dir);
+        if (paiAux == raiz)
+          raiz = rotacaoDireita(paiAux);
+        else
+          rotacaoDireita(paiAux);
+      }
 
-      // if (dif > 1 && aux->esq != nullptr && c < aux->esq->chave)
-      // {
-      //   cout << "\nRotacao Dir POSITIVO";
-      //   if (aux == raiz)
-      //     raiz = rotacaoDireita(aux);
-      //   else
-      //     rotacaoDireita(aux);
-      // }
-      // if (dif > 1 && aux->esq != nullptr && c > aux->esq->chave)
-      // {
-      //   cout << "\nRotacao Esq POSITIVO";
-      //   raiz->esq = rotacaoEsquerda(aux->esq);
-      //   if (n == raiz)
-      //     raiz = rotacaoDireita(aux);
-      //   else
-      //     rotacaoDireita(aux);
-      // }
+      if (dif < -1 && paiAux->dir != nullptr && getBalanceamento(paiAux->dir) <= 0)
+      {
+        //cout << "\nRotacao Dir POSITIVO";
+        if (paiAux == raiz)
+          raiz = rotacaoEsquerda(paiAux);
+        else
+          rotacaoEsquerda(paiAux);
+      }
+      if (dif < -1 && paiAux->dir != nullptr && getBalanceamento(paiAux->dir) > 0)
+      {
+        //cout << "\nRotacao Esq POSITIVO";
+        paiAux->esq = rotacaoDireita(paiAux->esq);
+        if (paiAux == raiz)
+          raiz = rotacaoEsquerda(paiAux);
+        else
+          rotacaoEsquerda(paiAux);
+      }
 
-      aux = aux->pai;
+      paiAux = paiAux->pai;
     }
 
     cout << "\n\n---------- ARVORE AVL ----------\n";

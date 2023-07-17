@@ -9,16 +9,16 @@ int main()
     try
     {
         DicioAVL<int, char> D;
-        DicioAVL<int, char>::Iterador its[20], it;
+        DicioAVL<int, char>::Iterador its[10], it;
         int i;
-        for (i = 48; i < 68; ++i)
+        for (i = 48; i < 58; ++i)
         {
             cout<<"\n---------------------------------------\n";
             it = D.inserir(i, (char)i);
-            //cout << "\n\nValor inserido: " << it.valor() << "\n\n";
+            cout << "\n\n[MAIN] - Valor inserido: " << it.valor() << "\n\n";
             if (it == D.end())
             {
-                cout << "\nAchei sentinela";
+                cout << "\n[MAIN] - Achei sentinela";
                 return 2;
             }
            
@@ -32,17 +32,17 @@ int main()
 
         for (it = D.begin(); it != D.end(); ++it)
         {
-            cout << "\nO codigo de '" << it.valor()
+            cout << "\n[MAIN] - O codigo de '" << it.valor()
                  << "' e " << it.chave() << '\n';
         }
         
         //cout<< "\nIterador: " << it.valor();
-        cout << "\n\nBuscando:";
+        cout << "\n\n[MAIN] - Buscando:";
         for (i = 48; i < 58; ++i)
         {
-            cout <<"\nChave: " << i;
+            cout <<"\n[MAIN] - Chave: " << i;
             it = D.buscar(i);
-            cout <<"\nValor: " << it.valor();
+            cout <<"\n[MAIN] - Valor: " << it.valor();
             if (it != its[i - 48])
                 return 2;
             D.remover(it);
@@ -50,10 +50,10 @@ int main()
 
         for (it = D.begin(); it != D.end(); ++it)
         {
-            cout << "\nO codigo de '" << it.valor()
+            cout << "\n[MAIN] - O codigo de '" << it.valor()
                  << "' e " << it.chave() << '\n';
         }
-        cout << "\nExecutou o teste basico conforme esperado.\n";
+        cout << "\n[MAIN] - Executou o teste basico conforme esperado.\n";
     }
     catch (const exception &e)
     {
